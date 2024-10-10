@@ -6,7 +6,7 @@
 /*   By: myakoven <myakoven@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/16 15:48:13 by spitul            #+#    #+#             */
-/*   Updated: 2024/10/11 00:05:36 by myakoven         ###   ########.fr       */
+/*   Updated: 2024/10/11 00:21:54 by myakoven         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -151,7 +151,7 @@ void	exec_shell(t_tools *tool, t_execcmd *ecmd)
 		exit(fork_error());
 }
 
-int	check_cmd(t_tools *tool, t_execcmd *ecmd)
+void	check_cmd(t_tools *tool, t_execcmd *ecmd)
 {
 	char	*path;
 	char	*pathcmd;
@@ -167,11 +167,11 @@ int	check_cmd(t_tools *tool, t_execcmd *ecmd)
 	}
 	path = get_env_var(tool->env, "PATH");
 	if (!path)
-		return (error_exit(tool, 1)); // MYAKOVEN
+		return (error_exit(tool, 1)); // MYAKOVEN malloc error
 	split_path = ft_split(path, ":");
 	free(path);
 	if (!split_path)
-		return (error_exit(tool, 1)); // MYAKOVEN
+		return (error_exit(tool, 1)); // MYAKOVEN malloc error
 	while (split_path[i])
 	{
 		pathcmd = check_cmd_in_path(split_path[i], ecmd->argv[0]);
@@ -180,16 +180,12 @@ int	check_cmd(t_tools *tool, t_execcmd *ecmd)
 			exec_path(pathcmd, ecmd, tool->env);
 			free(pathcmd);
 			break ;
-			return (0);
 		}
 		i++;
 	}
 	ft_freetab(split_path, INT_MAX);
 	print_error(ecmd->argv[0], strerror(errno), NULL);
 	// error_exec(ecmd);                         // command not found
-	// MYAKOVEN how can we return the cursor to the user?
-	// maybe this? with recursive execution.. im not sure how to return 0...
-	return (0);
 }
 
 void	exec_cmd(t_cmd *cmd, char **env)
