@@ -1,0 +1,12 @@
+c3a8c1% bash
+spitul@c3a8c1:~$ bash echo hello
+
+/usr/bin/echo: /usr/bin/echo: cannot execute binary file
+
+---------
+
+help testen
+
+--------
+
+exit codes - bei allen errors muss ein exit code gesetzt werden
