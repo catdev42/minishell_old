@@ -6,13 +6,13 @@
 /*   By: myakoven <myakoven@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/16 15:48:13 by spitul            #+#    #+#             */
-/*   Updated: 2024/10/11 00:03:54 by myakoven         ###   ########.fr       */
+/*   Updated: 2024/10/11 00:05:36 by myakoven         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 /*
 MYAKOVEN
-Overall question: can we start a fork as soon as we are in a redir or exec struct? 
+Overall question: can we start a fork as soon as we are in a redir or exec struct?
 aka the executing arm of the tree redir->redir->redir->exec
 
 Process:
@@ -23,12 +23,12 @@ If it is a builtin and there are no pipes, launch the builtin without a fork.
 
 If it is not a builtin or there are pipes,
 	launch the entire execution inside a fork?
-	
+
 If anything (like command path) fails,
-	we should print the error and then exit the fork? 
+	we should print the error and then exit the fork?
 But what if the failure is with opening a file in redirect? then just print error and exit
 
-If in redir or exec the failure is CRITICAL (malloc fork or pipe fail), 
+If in redir or exec the failure is CRITICAL (malloc fork or pipe fail),
 send special exit symbol to let the rest of the program know that it needs to quit too.
 */
 
@@ -192,15 +192,7 @@ int	check_cmd(t_tools *tool, t_execcmd *ecmd)
 	return (0);
 }
 
-// Can we put returns everywhere if we are not in forks?
-// oh man... i am really thinking it would be great to be in a fork....
-// then we can... clean and exit fork
-// We need to stop execution... if we find an error...
-
-/*MYAKOVEN added a bunch of returns to test in case we dont 
-want to launch in a fork... i think we need to streamline 
-when we need to quit the entire program vs return the cursor to the user. */
-int	exec_cmd(t_cmd *cmd, char **env)
+void	exec_cmd(t_cmd *cmd, char **env)
 {
 	t_execcmd	*ecmd;
 	t_redircmd	*rcmd;
@@ -209,21 +201,20 @@ int	exec_cmd(t_cmd *cmd, char **env)
 	if (cmd->type == EXEC)
 	{
 		ecmd = (t_execcmd *)cmd;
-		if (!check_cmd(env, ecmd))
-			return (0);
+		check_cmd(env, ecmd);
 	}
 	else if (cmd->type == REDIR)
 	{
 		rcmd = (t_redircmd *)cmd;
-		return (redir_cmd(rcmd));
+		redir_cmd(rcmd);
 	}
 	else if (cmd->type == PIPE)
 	{
 		pcmd = (t_pipecmd *)cmd;
-		return (pipe_cmd(pcmd));
+		pipe_cmd(pcmd);
 	}
 	else
-		return (1);
+		return ;
 }
 
 /*void	_exec_cmd(char *pathcmd, t_execcmd *cmd, char **env)
