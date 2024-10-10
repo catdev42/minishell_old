@@ -1,32 +1,35 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   exec.c                                             :+:      :+:    :+:   */
+/*   exec_mashanotes.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: myakoven <myakoven@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/16 15:48:13 by spitul            #+#    #+#             */
-/*   Updated: 2024/10/10 23:20:57 by myakoven         ###   ########.fr       */
+/*   Updated: 2024/10/11 00:03:54 by myakoven         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 /*
 MYAKOVEN
-Overall question: can we start a fork as soon as we know we have an exec struct?
+Overall question: can we start a fork as soon as we are in a redir or exec struct? 
+aka the executing arm of the tree redir->redir->redir->exec
+
 Process:
 Check if there is a pipe node in the tools->tree pointer
 If not, then check if the thing in the execute struct argv is a builtin...
 If not, then launch a fork and execute
 If it is a builtin and there are no pipes, launch the builtin without a fork.
 
-If it is not a builtin or there are forks,
+If it is not a builtin or there are pipes,
 	launch the entire execution inside a fork?
+	
 If anything (like command path) fails,
-	we should print the error and Exit the process...
-then we can immediately return the cursor to the user after printing the error...
+	we should print the error and then exit the fork? 
+But what if the failure is with opening a file in redirect? then just print error and exit
 
-For MALLOC or critical errors like fork fail etc we can define a specific exit code that we can check when the child exits... that lets us know to EXIT the entire program not jsut give back the cursor
-Other
+If in redir or exec the failure is CRITICAL (malloc fork or pipe fail), 
+send special exit symbol to let the rest of the program know that it needs to quit too.
 */
 
 #include "./include/minishell.h"
@@ -60,7 +63,6 @@ int	check_builtin(char *s)
 	len = ft_strlen(s);
 	ft_bzero((void *)a, 7 * sizeof(int));
 	if (len == 4 && ft_strncmp(s, ECHO, len) == 0)
-		// MYAKOVEN I am a little bit confused about what this is doing...
 		a[0] = echo();
 	else if (len == 2 && ft_strncmp(s, CD, len) == 0)
 		a[1] = cd();
