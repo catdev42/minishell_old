@@ -6,7 +6,7 @@
 /*   By: myakoven <myakoven@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 19:22:37 by myakoven          #+#    #+#             */
-/*   Updated: 2024/10/10 23:17:04 by myakoven         ###   ########.fr       */
+/*   Updated: 2024/10/11 17:49:36 by myakoven         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,8 @@ This description is wrong.
 Input NULL or errline and/or errarg.
 If errline is provided, an error is printed to the screen,
 is errarg is provided, it is appended to the error string*/
-int	print_error(const char *arg, const char *errline, const char *errarg)
+int	print_error(const char *arg, const char *errline, const char *errarg,
+		int err)
 {
 	ft_putstr_fd("msh: ", 2);
 	if (arg)
@@ -30,17 +31,21 @@ int	print_error(const char *arg, const char *errline, const char *errarg)
 		ft_putstr_fd(errline, 2);
 		if (errarg)
 		{
-			// CHECK THIS with ` backticks and single quotes TODO TO DO
 			ft_putstr_fd("`", 2);
 			ft_putstr_fd(errarg, 2);
 			ft_putstr_fd("\'", 2);
-			// free(errarg); // this is NOT allocated
 		}
 		ft_putstr_fd("\n", 2);
 	}
-	return (1); // returns exit failure int
+	return (errno); // returns exit failure int
 }
-
+// void	print_errnum_error(const char *arg, const char *errline,
+// 		const char *errarg, int err)
+// {
+// 	print_error(const char *arg, const char *errline, const char *errarg);
+// 	if (err > 1)
+// 		exit(errno);
+// }
 /*
 FOR EXITING!
 0: CTRL D or EXIT SUCCESS
