@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   execredir.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: myakoven <myakoven@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: spitul <spitul@student.42berlin.de >       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/24 16:34:23 by spitul            #+#    #+#             */
-/*   Updated: 2024/10/10 23:13:34 by myakoven         ###   ########.fr       */
+/*   Updated: 2024/10/12 18:26:15 by spitul           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "./include/minishell.h"
 
 // error msg need to go to stderr
 
@@ -40,7 +40,7 @@ int	pipe_error(t_pipecmd *pcmd)
 	ecmd = NULL;
 	ecmd = (t_execcmd *)(pcmd->left);
 	ft_putstr_fd("msh: ", 2);
-	ft_putstr_fd(ecmd->argv[0], 2);
+	ft_putstr_fd(ecmd->argv[0], 2); // no arg
 	ft_putstr_fd(": command not found\n", 2);
 	return (1);
 }
@@ -73,44 +73,56 @@ void	redir_cmd(t_redircmd *rcmd)
 	if (rcmd->fd == -1)
 	{
 		print_error(rcmd->cmd, strerror(errno), NULL);
-		exit(redir_error(rcmd));
-	} //MYAKOVEN addded curly braces
+		exit(PIPEERROR);
+	}
 	exec_cmd(rcmd->cmd);
+}
+
+pid_t	msh_fork(int fd, t_cmd *cmd, int pfd)
+{
+	int		pipefd[2];
+	int		pid;
+
+	if (pipe(pipefd) == -1)
+		exit(pipe_error(cmd)); 
+	pid = fork();
+	if (pid == -1)
+		exit(fork_error()); // when clean?
+	if (pid == 0)
+	{
+		close(pipefd[pfd]);
+		dup2(pipefd[fd], fd); 
+		close(pipefd[fd]);
+		exec_cmd(cmd);	
+	}
+	else
+	{
+		close (pipefd[0]);
+		close (pipefd[1]);
+	}
+	return (pid);
 }
 
 void	pipe_cmd(t_pipecmd *pcmd, t_tools *tools)
 {
-	int		pipefd[2];
+	int		status1;
+	int		status2;
 	pid_t	pid1;
 	pid_t	pid2;
 
-	if (pipe(pipefd) == -1)
-		exit(pipe_error(pcmd)); // when clean?
-								// can we use the one Error exit function and put all functionalities in there?
-	pid1 = fork();
-	if (pid1 == -1)
-		exit(fork_error()); // when clean?
-	if (pid1 == 0)
-	{
-		close(pipefd[0]);
-		dup2(pipefd[1], STDOUT_FILENO);
-		close(pipefd[1]);
-		exec_cmd(pcmd->left);
-	}
-	pid2 = fork();
-	if (pid2 == -1)
-		exit(fork_error()); // when clean?
-	if (pid2 == 0)
-	{
-		close(pipefd[1]);
-		dup2(pipefd[0], STDIN_FILENO);
-		close(pipefd[0]);
-		exec_cmd(pcmd->right);
-	}
-	waitpid(pid1, &tools->exit_code, 0);
-	waitpid(pid2, &tools->exit_code, 0);
-	close(pipefd[0]);
-	close(pipefd[1]);
+	pid1 = msh_fork(1, pcmd->left, 0);
+	waitpid(pid1, &status1, 0);
+	if (WIFEXITED(status1))
+		tools->exit_code = WEXITSTATUS(status1);
+	else if (WIFSIGNALED(status1))
+		tools->exit_code = WTERMSIG(status1) + 128;
+	pid2 = msh_fork(0, pcmd->right, 1);
+	waitpid(pid2, &status2, 0);
+	if (WIFEXITED(status2))
+		tools->exit_code = WEXITSTATUS(status2);
+	else if (WIFSIGNALED(status2))
+		tools->exit_code = WTERMSIG(status2) + 128;
+	cleanexit(tools); // check this
 }
 
 // /* Input NULL or errline and/or errarg.
