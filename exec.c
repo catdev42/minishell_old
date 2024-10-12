@@ -6,7 +6,7 @@
 /*   By: spitul <spitul@student.42berlin.de >       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/16 15:48:13 by spitul            #+#    #+#             */
-/*   Updated: 2024/10/12 18:41:15 by spitul           ###   ########.fr       */
+/*   Updated: 2024/10/12 18:52:35 by spitul           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ void	running_msh(t_tools *tool)
 		exec_cmd(tool->tree, tool);
 	else if 
 	{
-		while (tool->tree)
+		
 	}
 }
 
