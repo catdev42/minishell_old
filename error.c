@@ -6,19 +6,18 @@
 /*   By: myakoven <myakoven@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 19:22:37 by myakoven          #+#    #+#             */
-/*   Updated: 2024/10/11 17:49:36 by myakoven         ###   ########.fr       */
+/*   Updated: 2024/10/12 18:03:31 by myakoven         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "./include/minishell.h"
 
-/*
+/* FOR MAIN PROCESS
 This description is wrong.
 Input NULL or errline and/or errarg.
 If errline is provided, an error is printed to the screen,
 is errarg is provided, it is appended to the error string*/
-int	print_error(const char *arg, const char *errline, const char *errarg,
-		int err)
+int	print_error(const char *arg, const char *errline, const char *errarg)
 {
 	ft_putstr_fd("msh: ", 2);
 	if (arg)
@@ -37,15 +36,37 @@ int	print_error(const char *arg, const char *errline, const char *errarg,
 		}
 		ft_putstr_fd("\n", 2);
 	}
-	return (errno); // returns exit failure int
+	return (0);
 }
-// void	print_errnum_error(const char *arg, const char *errline,
-// 		const char *errarg, int err)
-// {
-// 	print_error(const char *arg, const char *errline, const char *errarg);
-// 	if (err > 1)
-// 		exit(errno);
-// }
+
+/* FOR FORK PROCESS
+Input NULL if  a parameter is not needed.
+//??? What do subsequent exit return is critical error???
+ARG: input file name or command name
+ERRLINE: custor error message or strerror(errnum) is printed
+ERRARG: the thing inside of backticks if needed */
+int	print_errno_error(const char *arg, const char *errline, const char *errarg)
+{
+	ft_putstr_fd("msh: ", 2);
+	if (arg)
+	{
+		ft_putstr_fd(arg, 2);
+		ft_putstr_fd(": ", 2);
+	}
+	if (errline)
+		ft_putstr_fd(errline, 2);
+	else
+		ft_putstr_fd(strerror(errno), 2);
+	if (errarg)
+	{
+		ft_putstr_fd("`", 2);
+		ft_putstr_fd(errarg, 2);
+		ft_putstr_fd("\'", 2);
+	}
+	ft_putstr_fd("\n", 2);
+	exit(errno);
+}
+
 /*
 FOR EXITING!
 0: CTRL D or EXIT SUCCESS
@@ -56,15 +77,16 @@ int	error_exit(t_tools *tools, int error)
 {
 	clean_tools(tools);
 	clear_history();
-	if (error == 0)
+	if (error == 0) // sucessful exit
 		exit(0);
 	else if (error == 1)
 	{
+		// usually malloc error.... this need to be edited and replaces with errno exits...
 		print_error(NULL, strerror(errno), NULL);
-		exit(1);
+		exit(error);
 	}
-	else if (error == 2)
-		exit(1);
+	else if (error > 1)
+		exit(error);
 	return (1);
 }
 
@@ -117,3 +139,10 @@ char	**free_array(char **res, int nb)
 	return (NULL);
 }
 */
+// void	print_errnum_error(const char *arg, const char *errline,
+// 		const char *errarg, int err)
+// {
+// 	print_error(const char *arg, const char *errline, const char *errarg);
+// 	if (err > 1)
+// 		exit(errno);
+// }

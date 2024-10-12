@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "format": "c",
-        "complex": "c"
+        "complex": "c",
+        "unistd.h": "c"
     }
 }
