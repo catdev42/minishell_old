@@ -6,7 +6,7 @@
 /*   By: myakoven <myakoven@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 19:22:37 by myakoven          #+#    #+#             */
-/*   Updated: 2024/10/12 18:03:31 by myakoven         ###   ########.fr       */
+/*   Updated: 2024/10/12 18:06:55 by myakoven         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,8 +45,11 @@ Input NULL if  a parameter is not needed.
 ARG: input file name or command name
 ERRLINE: custor error message or strerror(errnum) is printed
 ERRARG: the thing inside of backticks if needed */
-int	print_errno_error(const char *arg, const char *errline, const char *errarg)
+int	print_errno_error(const char *arg, const char *errline, const char *errarg,
+		t_tools *tools)
 {
+	clear_history();
+	clean_tools(tools);
 	ft_putstr_fd("msh: ", 2);
 	if (arg)
 	{
