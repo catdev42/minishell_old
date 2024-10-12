@@ -6,17 +6,35 @@
 /*   By: myakoven <myakoven@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 19:22:37 by myakoven          #+#    #+#             */
-/*   Updated: 2024/10/12 18:03:31 by myakoven         ###   ########.fr       */
+/*   Updated: 2024/10/12 21:54:47 by myakoven         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "./include/minishell.h"
 
+/*
+Error paths:
+Parsing:
+	if system error 
+		then exit (with cleaning)
+	else 
+		return 0 in all functions (except -1 in mode finding (MOVE TO EXECUTION))
+Execution (FORKS)
+		Print error and exit with errno
+		Waitpid catches the error, analyses to see if System Failure 
+
+		If CRITICAL ERROR
+			(Program should exit immediately as oppposed to just terminate one fork and keep going)
+		else if just some error in a fork (like command not found)
+			terminate just that fork, keep going with the program		
+*/
+
+
 /* FOR MAIN PROCESS
-This description is wrong.
-Input NULL or errline and/or errarg.
-If errline is provided, an error is printed to the screen,
-is errarg is provided, it is appended to the error string*/
+Input NULL or what to print in the 3 prositions:
+msh: (arg): (errline) `(errarg)'
+If NULL at a specific position, that position is NOT printed
+*/
 int	print_error(const char *arg, const char *errline, const char *errarg)
 {
 	ft_putstr_fd("msh: ", 2);

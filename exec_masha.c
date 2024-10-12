@@ -6,7 +6,7 @@
 /*   By: myakoven <myakoven@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/16 15:48:13 by spitul            #+#    #+#             */
-/*   Updated: 2024/10/11 16:34:42 by myakoven         ###   ########.fr       */
+/*   Updated: 2024/10/12 22:16:38 by myakoven         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,7 +144,7 @@ void	check_cmd(t_tools *tool, t_execcmd *ecmd)
 		i++;
 	}
 	ft_freetab(split_path, INT_MAX);
-	print_error(ecmd->argv[0], strerror(errno), NULL);
+	print_error(ecmd->argv[0], strerror(errno), NULL); //CHANGE
 	// error_exec(ecmd);                         // command not found
 }
 
