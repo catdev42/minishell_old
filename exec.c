@@ -62,12 +62,25 @@ int	run_builtin(char *s)
 
 void	running_msh(t_tools *tool)
 {
-	if (tool->tree->type == PIPE)
-		exec_cmd(tool->tree, tool);
-	else if 
+	pid_t	pid;
+	int		status;
+
+//forks if there is a pipe or a non builtin command else it executes without forking
+	if (tool->tree->type == PIPE || builtin_check_walk(tool->tree) == 0)
 	{
-		
+		pid = fork();
+		if (pid == -1)
+			exit(print_error); //this thing done right
+		if (pid == 0)
+			exec_cmd(tool->tree, tool);
+		waitpid(pid, &status, 0);
+		if (WIFEXITED(status))
+			tools->exit_code = WEXITSTATUS(status);
+		else if (WIFSIGNALED(status))
+			tools->exit_code = WTERMSIG(status) + 128;
 	}
+	else
+		exec_cmd(tool->tree, tool);
 }
 
 void	error_exec(t_execcmd *cmd)
@@ -111,27 +124,13 @@ char	*check_cmd_in_path(char *path, t_execcmd *cmd)
 
 int	exec_path(char *pathcmd, t_execcmd *ecmd, t_tools *tool)
 {
-	pid_t	pid;
-	int		status;
-
-	pid = fork();
-	if (pid == -1)
-		exit(fork_error());
-	if (pid == 0)
-	{
-		if (execve(pathcmd, ecmd->argv, tool->env) == -1)
+	if (execve(pathcmd, ecmd->argv, tool->env) == -1)
 			error_exec(ecmd);
-	}
-	else
-		waitpid(pid, &status, 0);
-	if (WIFEXITED(status))
-		tool->exit_code = WEXITSTATUS(status);
-	else if (WIFSIGNALED(status))
-		tool->exit_code = WTERMSIG(status) + 128;
 	return (1);
 }
 
-void	exec_shell(t_tools *tool, t_execcmd *ecmd)
+//function still needs to be finished
+void	exec_shell(t_tools *tool, t_execcmd *ecmd) 
 {
 	pid_t	pid;
 

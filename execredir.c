@@ -78,7 +78,7 @@ void	redir_cmd(t_redircmd *rcmd)
 	exec_cmd(rcmd->cmd);
 }
 
-pid_t	msh_fork(int fd, t_cmd *cmd, int pfd)
+pid_t	pipe_fork(int fd, t_cmd *cmd, int pfd)
 {
 	int		pipefd[2];
 	int		pid;
@@ -103,6 +103,7 @@ pid_t	msh_fork(int fd, t_cmd *cmd, int pfd)
 	return (pid);
 }
 
+//check order of running processes correct?
 void	pipe_cmd(t_pipecmd *pcmd, t_tools *tools)
 {
 	int		status1;
@@ -110,13 +111,13 @@ void	pipe_cmd(t_pipecmd *pcmd, t_tools *tools)
 	pid_t	pid1;
 	pid_t	pid2;
 
-	pid1 = msh_fork(1, pcmd->left, 0);
+	pid1 = pipe_fork(1, pcmd->left, 0);
+	pid2 = pipe_fork(0, pcmd->right, 1);
 	waitpid(pid1, &status1, 0);
 	if (WIFEXITED(status1))
 		tools->exit_code = WEXITSTATUS(status1);
 	else if (WIFSIGNALED(status1))
 		tools->exit_code = WTERMSIG(status1) + 128;
-	pid2 = msh_fork(0, pcmd->right, 1);
 	waitpid(pid2, &status2, 0);
 	if (WIFEXITED(status2))
 		tools->exit_code = WEXITSTATUS(status2);

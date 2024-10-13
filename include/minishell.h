@@ -32,7 +32,7 @@
 
 # define UNEXP "syntax error near unexpected token "
 # define UNCLOSED "unclosed quotes "
-
+/*Builtins*/
 # define ECHO "echo"
 # define CD "cd"
 # define PWD "pwd"
