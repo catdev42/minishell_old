@@ -6,7 +6,7 @@
 /*   By: myakoven <myakoven@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 19:07:28 by myakoven          #+#    #+#             */
-/*   Updated: 2024/10/14 13:33:25 by myakoven         ###   ########.fr       */
+/*   Updated: 2024/10/14 19:29:36 by myakoven         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,8 @@ char	*clean_line(char *line, int linelen, t_tools *tools)
 	c_line = tools->cleanline;
 	while (line[i] && j < tools->cl_capacity)
 	{
+		// CHECK WHAT ALL THE COPY FUNCTIONS RETURN cause if copy 
+		// var doesn't increment... we are in infinite loop
 		if (line[i] == '\'' || line[i] == '"')
 			i = i + copy_quotes(&c_line[j], &line[i], tools);
 		else if (line[i] == '|')

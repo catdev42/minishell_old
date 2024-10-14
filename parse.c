@@ -6,21 +6,22 @@
 /*   By: myakoven <myakoven@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 00:42:37 by myakoven          #+#    #+#             */
-/*   Updated: 2024/10/14 13:47:11 by myakoven         ###   ########.fr       */
+/*   Updated: 2024/10/14 19:22:35 by myakoven         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "./include/minishell.h"
 
 static void		nullify(char *cline, t_tools *tools);
-static void		remove_useless_quotes_nulled(char *cline, t_tools *tools);
-// FIX THIS TO BE MORE PRECISE MAYBE?
+static void	remove_useless_quotes_final(char *cline, size_t linecapacity);
+		// FIX THIS TO BE MORE PRECISE MAYBE?
 
 struct s_cmd	*parseline(char *cline, t_tools *tools)
 {
 	struct s_cmd	*left;
 	struct s_cmd	*right;
 
+	tools->s = cline;
 	while (peek(tools->s, tools->e_cline, PIPE))
 	{
 		left = NULL;
@@ -116,53 +117,54 @@ static void	nullify(char *cline, t_tools *tools)
 			i = skip_token(cline, i);
 		i++;
 	}
-	remove_useless_quotes_nulled(cline, tools);
+	remove_useless_quotes_final(cline, tools->cl_capacity);
 }
 
-static void	remove_useless_quotes_nulled(char *cline, t_tools *tools)
-{
-	int		i;
-	char	quotechar;
-	char	*firstquote;
-	char	*secondquote;
-	bool	removequotes;
+// static void	remove_useless_quotes_nulled(char *cline, t_tools *tools)
+// {
+// 	size_t	i;
+// 	char	quotechar;
+// 	char	*firstquote;
+// 	char	*secondquote;
+// 	bool	removequotes;
 
-	removequotes = 1;
-	firstquote = 0;
-	secondquote = 0;
-	i = 0;
-	while (i < tools->cl_capacity)
-	{
-		quotechar = 0;
-		removequotes = 1;
-		if (isquote(cline[i]))
-		{
-			quotechar = cline[i];
-			firstquote = &cline[i];
-			i++;
-			while (cline[i] && cline[i] != quotechar)
-				i++;
-			if (cline[i] == quotechar)
-			{
-				secondquote = &cline[i];
-				remove_two(firstquote, secondquote);
-				i -= 2;
-			}
-		}
-		i++;
-	}
-}
+// 	removequotes = 1;
+// 	firstquote = 0;
+// 	secondquote = 0;
+// 	i = 0;
+// 	while (i < tools->cl_capacity)
+// 	{
+// 		quotechar = 0;
+// 		removequotes = 1;
+// 		if (isquote(cline[i]))
+// 		{
+// 			quotechar = cline[i];
+// 			firstquote = &cline[i];
+// 			i++;
+// 			while (cline[i] && cline[i] != quotechar)
+// 				i++;
+// 			if (cline[i] == quotechar)
+// 			{
+// 				secondquote = &cline[i];
+// 				remove_two(firstquote, secondquote);
+// 				i -= 2;
+// 			}
+// 		}
+// 		i++;
+// 	}
+// }
 
 /* Provide the line and its capacity */
 static void	remove_useless_quotes_final(char *cline, size_t linecapacity)
 {
-	int		i;
+	size_t	i;
 	char	quotechar;
 	char	*firstquote;
 
+	i = 0;
 	while (i < linecapacity)
 	{
-		init_zero(&i, NULL, firstquote, NULL);
+		firstquote = NULL;
 		quotechar = 0;
 		if (isquote(cline[i]))
 		{
