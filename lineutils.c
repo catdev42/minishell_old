@@ -6,7 +6,7 @@
 /*   By: myakoven <myakoven@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 23:59:13 by myakoven          #+#    #+#             */
-/*   Updated: 2024/10/14 12:13:31 by myakoven         ###   ########.fr       */
+/*   Updated: 2024/10/14 12:20:10 by myakoven         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,3 +127,6 @@ int	remove_two(char *first, char *second)
 	}
 	return (i);
 }
+
+
+
