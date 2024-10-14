@@ -6,7 +6,7 @@
 /*   By: myakoven <myakoven@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 17:15:14 by myakoven          #+#    #+#             */
-/*   Updated: 2024/10/10 00:23:24 by myakoven         ###   ########.fr       */
+/*   Updated: 2024/10/14 13:32:38 by myakoven         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,16 +50,18 @@ void	strip_quotes_final(char *start)
 }
 
 /*
-Can initialize 2 ints and 1 string pointer
+Can initialize 2 ints and 2 string pointers
 If something isnt necessary, pass in NULL
 Used by clean_line()!
 */
-void	init_zero(size_t *i, size_t *j, char **c_line)
+void	init_zero(size_t *i, size_t *j, char **str1, char **str2)
 {
 	if (i)
 		*i = 0;
 	if (j)
 		*j = 0;
-	if (c_line)
-		*c_line = NULL;
+	if (str1)
+		*str1 = NULL;
+	if (str2)
+		*str2 = NULL;
 }
