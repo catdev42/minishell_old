@@ -6,7 +6,7 @@
 /*   By: spitul <spitul@student.42berlin.de >       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/13 20:00:21 by myakoven          #+#    #+#             */
-/*   Updated: 2024/10/12 17:21:47 by spitul           ###   ########.fr       */
+/*   Updated: 2024/10/14 18:41:15 by spitul           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define STRUCTS_H
 
 # include "./minishell.h"
+// # include <stdbool.h>
 
 # define MAXARGS 20
 /* Type of node */
@@ -36,6 +37,9 @@ struct						s_execcmd
 struct						s_redircmd
 {
 	int						type;
+	// if >> not >
+	bool					append;
+
 	// 0xt thing redir or exec
 	struct s_cmd			*cmd;
 	// pointer to filename

@@ -1,6 +1,8 @@
 {
     "files.associations": {
-        "format": "c",
-        "complex": "c"
-    }
+		"format": "c",
+		"complex": "c",
+		"errno.h": "c",
+		"fcntl.h": "c"
+	}
 }

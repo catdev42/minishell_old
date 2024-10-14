@@ -6,7 +6,7 @@
 /*   By: spitul <spitul@student.42berlin.de >       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 20:13:20 by myakoven          #+#    #+#             */
-/*   Updated: 2024/09/06 19:34:59 by spitul           ###   ########.fr       */
+/*   Updated: 2024/10/14 19:02:58 by spitul           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 # include "structs.h"
 
-int	check_builtin(char *s);
+int	is_builtin(char *s);
 
 int	pwd(t_tools *tools, cmd_t *cmd);
 #endif

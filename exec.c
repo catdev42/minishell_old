@@ -6,13 +6,13 @@
 /*   By: spitul <spitul@student.42berlin.de >       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/16 15:48:13 by spitul            #+#    #+#             */
-/*   Updated: 2024/10/14 17:20:58 by spitul           ###   ########.fr       */
+/*   Updated: 2024/10/14 19:02:58 by spitul           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "include/minishell.h"
 
-int	check_builtin(char *s)
+int	is_builtin(char *s)
 {
 	int	a[7];
 	int	len;
@@ -38,26 +38,26 @@ int	check_builtin(char *s)
 
 int	run_builtin(char *s)
 {
-	int	a[7];
 	int	len;
+	int	a;
 
+	a = 0;
 	len = ft_strlen(s);
-	ft_bzero((void *)a, 7 * sizeof(int));
 	if (len == 4 && ft_strncmp(s, ECHO, len) == 0)
-		a[0] = echo();
+		a = echo();
 	else if (len == 2 && ft_strncmp(s, CD, len) == 0)
-		a[1] = cd();
+		a = cd();
 	else if (len == 3 && ft_strncmp(s, PWD, len) == 0)
-		a[2] = pwd();
+		a = pwd();
 	else if (len == 6 && ft_strncmp(s, EXPORT, len) == 0)
-		a[3] = export();
+		a = export();
 	else if (len == 5 && ft_strncmp(s, UNSET, len) == 0)
-		a[4] = unset();
+		a = unset();
 	else if (len == 3 && ft_strncmp(s, ENV, len) == 0)
-		a[5] = env();
+		a = env();
 	else if (len == 4 && ft_strncmp(s, EXIT, len) == 0)
-		a[6] = ft_exit();
-	return (a[0] || a[1] || a[2] || a[3] || a[4] || a[5] || a[6]);
+		a = ft_exit();
+	return (a);
 }
 
 void	running_msh(t_tools *tool)
@@ -81,16 +81,6 @@ void	running_msh(t_tools *tool)
 	}
 	else
 		exec_cmd(tool->tree, tool);
-}
-
-void	error_exec(t_execcmd *cmd)
-{
-	ft_putstr_fd("msh: ", 2);
-	ft_putstr_fd(strerror(errno), 2);
-	ft_putstr_fd(": ", 2);
-	// if
-	ft_putchar_fd(cmd->argv[0], 2);
-	ft_putstr_fd("\n", 2);
 }
 
 char	*check_cmd_in_path(char *path, t_execcmd *cmd)

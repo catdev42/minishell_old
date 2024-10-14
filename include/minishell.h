@@ -6,7 +6,7 @@
 /*   By: spitul <spitul@student.42berlin.de >       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 20:12:04 by myakoven          #+#    #+#             */
-/*   Updated: 2024/10/14 16:32:34 by spitul           ###   ########.fr       */
+/*   Updated: 2024/10/14 19:05:31 by spitul           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,7 @@
 # include <readline/readline.h>
 /* Keep on top */
 # include "../libft/libft.h"
-# include "builtins.h"
-# include "structs.h"
+
 # include <errno.h>
 # include <fcntl.h>
 # include <signal.h>
@@ -29,6 +28,9 @@
 # include <string.h>
 # include <sys/stat.h>
 # include <unistd.h>
+//
+# include "builtins.h"
+# include "structs.h"
 
 # define UNEXP "syntax error near unexpected token "
 # define UNCLOSED "unclosed quotes "
@@ -73,6 +75,11 @@ int				print_error(const char *arg, const char *errline,
 void			clean_tools(t_tools *tools);
 struct s_cmd	*clean_execs(struct s_cmd *first, struct s_cmd *second);
 /*char			**free_array(char **res, int nb);*/
+
+/************************/
+/******* EXEC.C ********/
+/************************/
+
 
 /************************/
 /******* INIT.C ********/

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   walking.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: myakoven <myakoven@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: spitul <spitul@student.42berlin.de >       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/08 17:53:30 by spitul            #+#    #+#             */
-/*   Updated: 2024/10/10 00:43:29 by myakoven         ###   ########.fr       */
+/*   Updated: 2024/10/14 19:04:14 by spitul           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ int	builtin_check_walk(t_cmd *cmd)
 		if (cmd->type == EXEC)
 		{
 			ecmd = (t_execcmd *)cmd;
-			res = check_builtin(cmd->argv[0]);
+			res = is_builtin(ecmd->argv[0]);
 			return (res);
 		}
 		else
@@ -42,7 +42,7 @@ int	builtin_check_walk(t_cmd *cmd)
 	}
 }
 
-void		walking(struct s_cmd *cmd)
+void	walking(struct s_cmd *cmd)
 {
 	struct s_execcmd	*ecmd;
 	struct s_redircmd	*rcmd;

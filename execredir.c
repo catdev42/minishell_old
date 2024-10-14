@@ -6,7 +6,7 @@
 /*   By: spitul <spitul@student.42berlin.de >       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/24 16:34:23 by spitul            #+#    #+#             */
-/*   Updated: 2024/10/12 18:26:15 by spitul           ###   ########.fr       */
+/*   Updated: 2024/10/14 18:53:52 by spitul           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,42 +33,12 @@
 // the writing command (the one trying to send data to the pipe)
 //  will receive a SIGPIPE signal and often terminate.
 
-int	pipe_error(t_pipecmd *pcmd)
-{
-	t_execcmd	*ecmd;
 
-	ecmd = NULL;
-	ecmd = (t_execcmd *)(pcmd->left);
-	ft_putstr_fd("msh: ", 2);
-	ft_putstr_fd(ecmd->argv[0], 2); // no arg
-	ft_putstr_fd(": command not found\n", 2);
-	return (1);
-}
-
-int	fork_error(void) // double check if this truely like this
-{
-	ft_putstr_fd("msh: fork: retry: Resource temporarily unavailable", 2);
-	return (1);
-}
-
-int	redir_error(t_redircmd *rcmd)
-{
-	if (errno == EMFILE || errno == ENFILE)
-		ft_putstr_fd("msh: Too many open files\n", 2);
-	else
-	{
-		ft_putstr_fd("msh: ", 2);
-		ft_putstr_fd(rcmd->file, 2);
-		ft_putstr_fd(": ", 2);
-		ft_putstr_fd(strerror(errno), 2);
-		ft_putstr_fd("\n", 2);
-	}
-	return (1);
-}
 
 void	redir_cmd(t_redircmd *rcmd)
 {
 	close(rcmd->fd);
+	
 	rcmd->fd = open(rcmd->file, rcmd->mode, 0644);
 	if (rcmd->fd == -1)
 	{
@@ -124,6 +94,59 @@ void	pipe_cmd(t_pipecmd *pcmd, t_tools *tools)
 	else if (WIFSIGNALED(status2))
 		tools->exit_code = WTERMSIG(status2) + 128;
 	cleanexit(tools); // check this
+}
+
+
+/* Checks if a path is a file or directory File: 1; Dir: 2; Neither: 0*/
+int	file_dir_noexist(const char *path, int fd_in_or_out)
+{
+	struct stat	path_stat;
+
+	if (stat(path, &path_stat) != 0)
+	{
+		if (errno == ENOENT && fd_in_or_out == 1)
+			return (1);
+		/* this should be checked only with infiles*/
+		print_error(path, strerror(errno), NULL);
+		return (0);
+	}
+	if (S_ISREG(path_stat.st_mode))
+	{
+		return (1);
+	}
+	else if (S_ISDIR(path_stat.st_mode))
+		return (2);
+	else
+		print_error(path, "Is neither a file nor a directory", NULL);
+	return (0);
+}
+
+/* Return the MODE necessary for OPEN() file or dir */
+
+int	check_file_type(char *start, int fd_in_or_out, t_tools *tools)
+{
+	char	*filepath;
+	int		fileordir;
+
+	if (!start || fd_in_or_out < 0)
+		return (0);
+		struct s_redircmd* rcmd;
+	// filepath = get_redir_path(start, tools);
+	fileordir = file_dir_noexist(rcmd->file, fd_in_or_out);
+	if (fileordir == 0)
+		return (-1);
+	if (rcmd->fd == 1 && fileordir == 2)
+		print_error(filepath, "Is a directory", NULL);
+	// free(filepath);
+	if (fileordir == 1 && rcmd->append && rcmd->fd == 1)
+		return (O_WRONLY | O_CREAT | O_APPEND);
+	else if (fileordir == 1 && !rcmd->append && rcmd->fd == 1)
+		return (O_WRONLY | O_CREAT | O_TRUNC);
+	else if (fileordir == 1 && rcmd->fd == 0)
+		return (O_RDONLY);
+	else if (fileordir == 2 && rcmd->fd == 0)
+		return (O_RDONLY | __O_DIRECTORY);
+	return (0);
 }
 
 // /* Input NULL or errline and/or errarg.

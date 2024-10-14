@@ -6,19 +6,36 @@
 /*   By: spitul <spitul@student.42berlin.de >       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 19:22:37 by myakoven          #+#    #+#             */
-/*   Updated: 2024/10/14 18:05:13 by spitul           ###   ########.fr       */
+/*   Updated: 2024/10/14 18:07:58 by spitul           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "./include/minishell.h"
 
 /*
+Error paths:
+Parsing:
+	if system error 
+		then exit (with cleaning)
+	else 
+		return 0 in all functions (except -1 in mode finding (MOVE TO EXECUTION))
+Execution (FORKS)
+		Print error and exit with errno
+		Waitpid catches the error, analyses to see if System Failure 
 
-Input NULL or errline and/or errarg.
-If errline is provided, an error is printed to the screen,
-is errarg is provided, it is appended to the error string*/
-int	print_error(const char *arg, const char *errline, const char *errarg,
-		int err)
+		If CRITICAL ERROR
+			(Program should exit immediately as oppposed to just terminate one fork and keep going)
+		else if just some error in a fork (like command not found)
+			terminate just that fork, keep going with the program		
+*/
+
+
+/* FOR MAIN PROCESS
+Input NULL or what to print in the 3 prositions:
+msh: (arg): (errline) `(errarg)'
+If NULL at a specific position, that position is NOT printed
+*/
+int	print_error(const char *arg, const char *errline, const char *errarg)
 {
 	ft_putstr_fd("msh: ", 2);
 	if (arg)
@@ -37,35 +54,57 @@ int	print_error(const char *arg, const char *errline, const char *errarg,
 		}
 		ft_putstr_fd("\n", 2);
 	}
-	return (errno); // returns exit failure int
+	return (0);
 }
-// void	print_errnum_error(const char *arg, const char *errline,
-// 		const char *errarg, int err)
-// {
-// 	print_error(const char *arg, const char *errline, const char *errarg);
-// 	if (err > 1)
-// 		exit(errno);
-// }
+
+/* FOR FORK PROCESS
+Input NULL if  a parameter is not needed.
+//??? What do subsequent exit return is critical error???
+ARG: input file name or command name
+ERRLINE: custor error message or strerror(errnum) is printed
+ERRARG: the thing inside of backticks if needed */
+int	print_errno_error(const char *arg, const char *errline, const char *errarg)
+{
+	ft_putstr_fd("msh: ", 2);
+	if (arg)
+	{
+		ft_putstr_fd(arg, 2);
+		ft_putstr_fd(": ", 2);
+	}
+	if (errline)
+		ft_putstr_fd(errline, 2);
+	else
+		ft_putstr_fd(strerror(errno), 2);
+	if (errarg)
+	{
+		ft_putstr_fd("`", 2);
+		ft_putstr_fd(errarg, 2);
+		ft_putstr_fd("\'", 2);
+	}
+	ft_putstr_fd("\n", 2);
+	exit(errno);
+}
+
 /*
 FOR EXITING!
 0: CTRL D or EXIT SUCCESS
 1: malloc
 3: just exit(1) nothing printed
 */
-
 int	error_exit(t_tools *tools, int error)
 {
 	clean_tools(tools);
 	clear_history();
-	if (error == 0)
+	if (error == 0) // sucessful exit
 		exit(0);
-	else if (error == 1 || error == 6)
+	else if (error == 1)
 	{
+		// usually malloc error.... this need to be edited and replaces with errno exits...
 		print_error(NULL, strerror(errno), NULL);
-		exit(1);
+		exit(error);
 	}
-	else if (error == 2)
-		exit(1);
+	else if (error > 1)
+		exit(error);
 	return (1);
 }
 
@@ -118,3 +157,10 @@ char	**free_array(char **res, int nb)
 	return (NULL);
 }
 */
+// void	print_errnum_error(const char *arg, const char *errline,
+// 		const char *errarg, int err)
+// {
+// 	print_error(const char *arg, const char *errline, const char *errarg);
+// 	if (err > 1)
+// 		exit(errno);
+// }
