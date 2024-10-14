@@ -6,7 +6,7 @@
 /*   By: spitul <spitul@student.42berlin.de >       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/16 15:48:13 by spitul            #+#    #+#             */
-/*   Updated: 2024/10/12 18:52:35 by spitul           ###   ########.fr       */
+/*   Updated: 2024/10/14 15:45:54 by spitul           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,9 +75,9 @@ void	running_msh(t_tools *tool)
 			exec_cmd(tool->tree, tool);
 		waitpid(pid, &status, 0);
 		if (WIFEXITED(status))
-			tools->exit_code = WEXITSTATUS(status);
+			tool->exit_code = WEXITSTATUS(status);
 		else if (WIFSIGNALED(status))
-			tools->exit_code = WTERMSIG(status) + 128;
+			tool->exit_code = WTERMSIG(status) + 128;
 	}
 	else
 		exec_cmd(tool->tree, tool);
