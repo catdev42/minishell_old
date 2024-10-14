@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   error.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: myakoven <myakoven@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: spitul <spitul@student.42berlin.de >       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 19:22:37 by myakoven          #+#    #+#             */
-/*   Updated: 2024/10/11 17:49:36 by myakoven         ###   ########.fr       */
+/*   Updated: 2024/10/14 18:05:13 by spitul           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "./include/minishell.h"
 
 /*
-This description is wrong.
+
 Input NULL or errline and/or errarg.
 If errline is provided, an error is printed to the screen,
 is errarg is provided, it is appended to the error string*/
@@ -52,13 +52,14 @@ FOR EXITING!
 1: malloc
 3: just exit(1) nothing printed
 */
+
 int	error_exit(t_tools *tools, int error)
 {
 	clean_tools(tools);
 	clear_history();
 	if (error == 0)
 		exit(0);
-	else if (error == 1)
+	else if (error == 1 || error == 6)
 	{
 		print_error(NULL, strerror(errno), NULL);
 		exit(1);

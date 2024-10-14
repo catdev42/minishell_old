@@ -6,7 +6,7 @@
 /*   By: spitul <spitul@student.42berlin.de >       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/16 15:48:13 by spitul            #+#    #+#             */
-/*   Updated: 2024/10/14 15:45:54 by spitul           ###   ########.fr       */
+/*   Updated: 2024/10/14 17:20:58 by spitul           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,8 @@
 
 int	check_builtin(char *s)
 {
-	int		a[7];
-	int		len;
+	int	a[7];
+	int	len;
 
 	len = ft_strlen(s);
 	ft_bzero((void *)a, 7 * sizeof(int));
@@ -38,8 +38,8 @@ int	check_builtin(char *s)
 
 int	run_builtin(char *s)
 {
-	int		a[7];
-	int		len;
+	int	a[7];
+	int	len;
 
 	len = ft_strlen(s);
 	ft_bzero((void *)a, 7 * sizeof(int));
@@ -65,12 +65,12 @@ void	running_msh(t_tools *tool)
 	pid_t	pid;
 	int		status;
 
-//forks if there is a pipe or a non builtin command else it executes without forking
-	if (tool->tree->type == PIPE || builtin_check_walk(tool->tree) == 0)
+	// forks if there is a pipe or a non builtin command else it executes without forking
+	if ((tool->tree->type == PIPE) || (builtin_check_walk(tool->tree) == 0))
 	{
 		pid = fork();
 		if (pid == -1)
-			exit(print_error); //this thing done right
+			exit(print_error); // this thing done right
 		if (pid == 0)
 			exec_cmd(tool->tree, tool);
 		waitpid(pid, &status, 0);
@@ -88,7 +88,7 @@ void	error_exec(t_execcmd *cmd)
 	ft_putstr_fd("msh: ", 2);
 	ft_putstr_fd(strerror(errno), 2);
 	ft_putstr_fd(": ", 2);
-	//if
+	// if
 	ft_putchar_fd(cmd->argv[0], 2);
 	ft_putstr_fd("\n", 2);
 }
@@ -125,27 +125,30 @@ char	*check_cmd_in_path(char *path, t_execcmd *cmd)
 int	exec_path(char *pathcmd, t_execcmd *ecmd, t_tools *tool)
 {
 	if (execve(pathcmd, ecmd->argv, tool->env) == -1)
-			error_exec(ecmd);
+		error_exec(ecmd);
 	return (1);
 }
 
-//function still needs to be finished
-void	exec_shell(t_tools *tool, t_execcmd *ecmd) 
+// function still needs to be finished
+void	exec_shell(t_tools *tool, t_execcmd *ecmd)
 {
 	pid_t	pid;
 	char	*shlvl;
 
-	shlvl = get_env_var(tool->env, "SHLVL");
-	if (ecmd->argv)
-	pid =  fork();
+	if (get_matrix_len(ecmd->argv) != 1)
+	{
+		print_error(NULL, "too many arguments", NULL);
+		return ; // how to exit to give the line back
+	}
+	pid = fork();
 	if (pid == -1)
-		exit(fork_error());
+		error_exit(tool, FORKERROR); // i think i dont have the last version
 	if (pid == 0)
 	{
-
-		if (execve("./minishell", ecmd->argv, tool->env))
+		change_shlvl(tool);
+		if (execve("./minishell", ecmd->argv, tool->env) == -1)
+			error_exit(tool, EXECVEERROR);
 	}
-		
 }
 
 void	check_cmd(t_tools *tool, t_execcmd *ecmd)
@@ -164,7 +167,7 @@ void	check_cmd(t_tools *tool, t_execcmd *ecmd)
 		exec_shell(tool, ecmd);
 		return ;
 	}
-	path = get_env_var(tool->env, "PATH");
+	path = get_var(tool->env, "PATH");
 	if (!path)
 		return ; // exit failure error_exit(  ****, 1);
 	split_path = ft_split(path, ":");
@@ -176,14 +179,14 @@ void	check_cmd(t_tools *tool, t_execcmd *ecmd)
 		pathcmd = check_cmd_in_path(split_path[i], ecmd->argv[0]);
 		if (pathcmd != NULL)
 		{
-			exec_path(pathcmd, ecmd, tool->env);
+			res = exec_path(pathcmd, ecmd, tool->env);
 			free(pathcmd);
 			break ;
 		}
 		i++;
 	}
 	if (!run_builtin(ecmd->argv[0]) && res == 0) //$?
-		error_exec(ecmd);                         // command not found
+		error_exec(ecmd);                        // command not found
 	free_tab(split_path);
 }
 
