@@ -133,10 +133,18 @@ int	exec_path(char *pathcmd, t_execcmd *ecmd, t_tools *tool)
 void	exec_shell(t_tools *tool, t_execcmd *ecmd) 
 {
 	pid_t	pid;
+	char	*shlvl;
 
+	shlvl = get_env_var(tool->env, "SHLVL");
+	if (ecmd->argv)
 	pid =  fork();
 	if (pid == -1)
 		exit(fork_error());
+	if (pid == 0)
+	{
+
+		if (execve("./minishell", ecmd->argv, tool->env))
+	}
 		
 }
 
