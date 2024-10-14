@@ -6,7 +6,7 @@
 /*   By: myakoven <myakoven@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 20:12:04 by myakoven          #+#    #+#             */
-/*   Updated: 2024/10/10 23:15:45 by myakoven         ###   ########.fr       */
+/*   Updated: 2024/10/14 13:33:01 by myakoven         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,8 @@
 # define UNSET "unset"
 # define ENV "env"
 # define EXIT "exit"
-/* error codes to send to error exit function error_exit(t_tools *tools, int error)*/
+/* error codes to send to error exit function error_exit(t_tools *tools,
+	int error)*/
 # define PIPEERROR 3
 # define FORKERROR 4
 # define OOMERROR 1
@@ -146,8 +147,7 @@ void			ft_bspace(void *s, size_t n);
 /******* utils2.c ********/
 char			*safe_calloc(size_t nmemb, size_t size, t_tools *tools);
 void			strip_quotes_final(char *start);
-void			init_zero(size_t *i, size_t *j, char **c_line);
-
+void			init_zero(size_t *i, size_t *j, char **str1, char **str2);
 /******* UTILS3.C *******/
 int				print_tab(char **envp);
 int				get_matrix_len(char **matrix);

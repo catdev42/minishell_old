@@ -6,7 +6,7 @@
 /*   By: myakoven <myakoven@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 23:59:13 by myakoven          #+#    #+#             */
-/*   Updated: 2024/10/14 12:20:10 by myakoven         ###   ########.fr       */
+/*   Updated: 2024/10/14 13:41:45 by myakoven         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,16 +69,12 @@ void	remove_useless_quotes(char *cline)
 	int		i;
 	char	quotechar;
 	char	*firstquote;
-	char	*secondquote;
 	bool	removequotes;
 
-	removequotes = 1;
-	firstquote = 0;
-	secondquote = 0;
-	i = 0;
-	quotechar = 0;
 	while (cline[i])
 	{
+		init_zero(&i, NULL, firstquote, NULL);
+		quotechar = 0;
 		removequotes = 1;
 		if (isquote(cline[i]))
 		{
@@ -86,22 +82,15 @@ void	remove_useless_quotes(char *cline)
 			firstquote = &cline[i];
 			i++;
 			while (cline[i] && cline[i] != quotechar)
-			{
-				if (ft_isspace(cline[i]) || istoken(cline[i])
-					|| cline[i] == '$')
+				if (ft_isspace(cline[i]) || istoken(cline[i++]))
 					removequotes = 0;
-				i++;
-			}
-			if (removequotes)
-			{
-				secondquote = &cline[i];
-				remove_two(firstquote, secondquote);
-				i -= 2;
-			}
+			if (removequotes && cline[i] == quotechar)
+				i -= remove_two(firstquote, &cline[i]);
 		}
 		i++;
 	}
 }
+// || cline[i] == '$'
 
 /*
 Removes 2 characters from a string, rewriting the string in the process.
@@ -127,6 +116,3 @@ int	remove_two(char *first, char *second)
 	}
 	return (i);
 }
-
-
-

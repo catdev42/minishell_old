@@ -6,7 +6,7 @@
 /*   By: myakoven <myakoven@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 19:22:37 by myakoven          #+#    #+#             */
-/*   Updated: 2024/10/12 21:54:47 by myakoven         ###   ########.fr       */
+/*   Updated: 2024/10/14 18:13:47 by myakoven         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,10 +61,14 @@ int	print_error(const char *arg, const char *errline, const char *errarg)
 Input NULL if  a parameter is not needed.
 //??? What do subsequent exit return is critical error???
 ARG: input file name or command name
-ERRLINE: custor error message or strerror(errnum) is printed
-ERRARG: the thing inside of backticks if needed */
-int	print_errno_error(const char *arg, const char *errline, const char *errarg)
+ERRLINE: custom error message or strerror(errnum) is printed
+ERRARG: the thing inside of backticks if needed 
+ex: print_errno_exit(, NULL, NULL, tools);*/
+
+int	print_errno_exit(const char *arg, const char *errline, const char *errarg, t_tools *tools)
 {
+	clean_tools(tools);
+	clear_history();
 	ft_putstr_fd("msh: ", 2);
 	if (arg)
 	{
@@ -97,7 +101,7 @@ int	error_exit(t_tools *tools, int error)
 	clear_history();
 	if (error == 0) // sucessful exit
 		exit(0);
-	else if (error == 1)
+	else if (error > 0)
 	{
 		// usually malloc error.... this need to be edited and replaces with errno exits...
 		print_error(NULL, strerror(errno), NULL);

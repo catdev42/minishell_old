@@ -6,7 +6,7 @@
 /*   By: myakoven <myakoven@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 00:42:37 by myakoven          #+#    #+#             */
-/*   Updated: 2024/10/14 12:32:03 by myakoven         ###   ########.fr       */
+/*   Updated: 2024/10/14 13:47:11 by myakoven         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,6 +148,31 @@ static void	remove_useless_quotes_nulled(char *cline, t_tools *tools)
 				remove_two(firstquote, secondquote);
 				i -= 2;
 			}
+		}
+		i++;
+	}
+}
+
+/* Provide the line and its capacity */
+static void	remove_useless_quotes_final(char *cline, size_t linecapacity)
+{
+	int		i;
+	char	quotechar;
+	char	*firstquote;
+
+	while (i < linecapacity)
+	{
+		init_zero(&i, NULL, firstquote, NULL);
+		quotechar = 0;
+		if (isquote(cline[i]))
+		{
+			quotechar = cline[i];
+			firstquote = &cline[i];
+			i++;
+			while (cline[i] && cline[i] != quotechar)
+				i++;
+			if (cline[i] && cline[i] == quotechar)
+				i -= remove_two(firstquote, &cline[i]);
 		}
 		i++;
 	}

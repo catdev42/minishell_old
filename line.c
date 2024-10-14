@@ -6,7 +6,7 @@
 /*   By: myakoven <myakoven@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 19:07:28 by myakoven          #+#    #+#             */
-/*   Updated: 2024/10/09 23:51:18 by myakoven         ###   ########.fr       */
+/*   Updated: 2024/10/14 13:33:25 by myakoven         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ char	*clean_line(char *line, int linelen, t_tools *tools)
 	size_t		j; 
 	
 
-	init_zero(&i, &j, &c_line);
+	init_zero(&i, &j, &c_line, NULL);
 	tools->cl_capacity = linelen * 2;
 	tools->cleanline = safe_calloc(tools->cl_capacity + 2, 1, tools);
 	c_line = tools->cleanline;
