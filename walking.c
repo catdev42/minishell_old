@@ -16,6 +16,7 @@ static void	print_cmd(t_execcmd *ecmd);
 static void	print_redir(t_redircmd *rcmd);
 static void	print_pipe(t_pipecmd *pcmd);
 
+/*checks if here is a non builtin command in a pipefree tree*/
 int	builtin_check_walk(t_cmd *cmd)
 {
 	struct s_execcmd	*ecmd;

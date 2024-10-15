@@ -12,61 +12,16 @@
 
 #include "include/minishell.h"
 
-int	is_builtin(char *s)
-{
-	int	a[7];
-	int	len;
-
-	len = ft_strlen(s);
-	ft_bzero((void *)a, 7 * sizeof(int));
-	if (len == 4 && ft_strncmp(s, ECHO, len) == 0)
-		a[0] = 1;
-	else if (len == 2 && ft_strncmp(s, CD, len) == 0)
-		a[1] = 1;
-	else if (len == 3 && ft_strncmp(s, PWD, len) == 0)
-		a[2] = 1;
-	else if (len == 6 && ft_strncmp(s, EXPORT, len) == 0)
-		a[3] = 1;
-	else if (len == 5 && ft_strncmp(s, UNSET, len) == 0)
-		a[4] = 1;
-	else if (len == 3 && ft_strncmp(s, ENV, len) == 0)
-		a[5] = 1;
-	else if (len == 4 && ft_strncmp(s, EXIT, len) == 0)
-		a[6] = 1;
-	return (a[0] || a[1] || a[2] || a[3] || a[4] || a[5] || a[6]);
-}
-
-int	run_builtin(char *s)
-{
-	int	len;
-	int	a;
-
-	a = 0;
-	len = ft_strlen(s);
-	if (len == 4 && ft_strncmp(s, ECHO, len) == 0)
-		a = echo();
-	else if (len == 2 && ft_strncmp(s, CD, len) == 0)
-		a = cd();
-	else if (len == 3 && ft_strncmp(s, PWD, len) == 0)
-		a = pwd();
-	else if (len == 6 && ft_strncmp(s, EXPORT, len) == 0)
-		a = export();
-	else if (len == 5 && ft_strncmp(s, UNSET, len) == 0)
-		a = unset();
-	else if (len == 3 && ft_strncmp(s, ENV, len) == 0)
-		a = env();
-	else if (len == 4 && ft_strncmp(s, EXIT, len) == 0)
-		a = ft_exit();
-	return (a);
-}
-
+/*forks if there is a pipe or a non builtin command else it 
+executes without forking
+TODO - running minishell inside minishell*/
 void	running_msh(t_tools *tool)
 {
 	pid_t	pid;
 	int		status;
 
-	// forks if there is a pipe or a non builtin command else it executes without forking
-	if ((tool->tree->type == PIPE) || (builtin_check_walk(tool->tree) == 0))
+	if ((tool->tree->type == PIPE) || (tool->tree->type != PIPE && 
+		(builtin_check_walk(tool->tree) == 0)))
 	{
 		pid = fork();
 		if (pid == -1)

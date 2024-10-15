@@ -73,7 +73,7 @@ pid_t	pipe_fork(int fd, t_cmd *cmd, int pfd)
 	return (pid);
 }
 
-//check order of running processes correct?
+//check if order of running processes correct?
 void	pipe_cmd(t_pipecmd *pcmd, t_tools *tools)
 {
 	int		status1;
@@ -148,31 +148,3 @@ int	check_file_type(char *start, int fd_in_or_out, t_tools *tools)
 		return (O_RDONLY | __O_DIRECTORY);
 	return (0);
 }
-
-// /* Input NULL or errline and/or errarg.
-// If arg is profive, then file name or command name is printed after msh: .
-// If errline is provided, an error is printed to the screen,
-// If errarg is provided, it is appended to the error string
-// */
-
-// int	print_error(char *arg, char *errline, char *errarg)
-// {
-// 	ft_putstr_fd("msh: ", 2);
-// 	if (arg)
-// 	{
-// 		ft_putstr_fd(arg, 2);
-// 		ft_putstr_fd(": ", 2);
-// 	}
-// 	if (errline)
-// 		ft_putstr_fd(errline, 2);
-// 	if (errarg)
-// 	{
-// 		// CHECK THIS with ` backticks and single quotes: `>>'
-// 		ft_putstr_fd("`", 2);
-// 		ft_putstr_fd(errarg, 2);
-// 		ft_putstr_fd("\'", 2);
-// 		// free(errarg); // this is NOT allocated
-// 	}
-// 	ft_putstr_fd("\n", 2);
-// 	return (0);
-// }
