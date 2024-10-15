@@ -6,7 +6,7 @@
 /*   By: myakoven <myakoven@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 17:15:14 by myakoven          #+#    #+#             */
-/*   Updated: 2024/10/14 13:32:38 by myakoven         ###   ########.fr       */
+/*   Updated: 2024/10/15 10:51:06 by myakoven         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ void	strip_quotes_final(char *start)
 	quotechar = 0;
 	while (start[i])
 	{
+		quotechar = 0;
 		if (isquote(start[i]))
 		{
 			quotechar = start[i];
@@ -43,7 +44,6 @@ void	strip_quotes_final(char *start)
 			i = skip_quotes(start, i);
 			if (start[i] && start[i] == quotechar)
 				i = i - remove_two(firstquote, &start[i]);
-			quotechar = 0;
 		}
 		i++;
 	}

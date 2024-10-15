@@ -6,7 +6,7 @@
 /*   By: myakoven <myakoven@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 23:59:13 by myakoven          #+#    #+#             */
-/*   Updated: 2024/10/15 10:48:28 by myakoven         ###   ########.fr       */
+/*   Updated: 2024/10/15 10:56:47 by myakoven         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,20 +80,15 @@ void	remove_useless_quotes(char *cline)
 		{
 			quotechar = cline[i];
 			firstquote = &cline[i];
-			i++;
-			while (cline[i] && cline[i] != quotechar)
-			{
+			while (cline[++i] && cline[i] != quotechar)
 				if (ft_isspace(cline[i]) || istoken(cline[i]))
 					removequotes = 0;
-				i++;
-			}
 			if (removequotes && cline[i] == quotechar)
 				i -= remove_two(firstquote, &cline[i]);
 		}
 		i++;
 	}
 }
-// || cline[i] == '$'
 
 /*
 Removes 2 characters from a string, rewriting the string in the process.
