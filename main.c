@@ -6,7 +6,7 @@
 /*   By: myakoven <myakoven@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 20:51:01 by myakoven          #+#    #+#             */
-/*   Updated: 2024/10/09 23:45:39 by myakoven         ###   ########.fr       */
+/*   Updated: 2024/10/15 10:30:12 by myakoven         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,16 +16,16 @@ volatile sig_atomic_t	global_signal = 0;
 
 int	main(int argc, char **argv, char **env)
 {
-	t_tools				tools;
-	struct sigaction	sa;
+	t_tools	tools;
 
+	// struct sigaction	sa;
 	if (argc > 1 || argv[1])
 		ft_putstr_fd("This program does not accept arguments\n", 2);
 	ft_memset(&tools, 0, sizeof(t_tools)); // init tools to zero
 	tools.env = copy_env(&tools, env);
 	if (!tools.env)
 		return (error_exit(&tools, 1));
-	init_sa(&sa);
+	// init_sa(&sa);
 	shell_loop(&tools);
 	print_tab(tools.env);
 	clear_history();
@@ -36,8 +36,8 @@ int	shell_loop(t_tools *tools)
 {
 	while (1)
 	{
-		if (global_signal == SIGTERM) // TODO? or done
-			break ;
+		// if (global_signal == SIGTERM) // TODO? or done
+		// 	break ;
 		reset_tools(tools);
 		tools->line = readline("minishell: ");
 		checkexit(tools); // We have to make our own exit builtin?
@@ -52,20 +52,19 @@ int	shell_loop(t_tools *tools)
 		tools->e_cline = tools->cleanline + ft_strlen(tools->cleanline);
 		if (!tools->cleanline)
 			continue ;
-		// ft_putstr_fd(tools->cleanline, 1); // testing
-		// ft_putstr_fd("\n", 1);             // testing
-		if (!parseline(tools->cleanline, tools))
-			continue ;
-		walking(tools->tree);
+		ft_putstr_fd(tools->cleanline, 1);
+		ft_putstr_fd("\n", 1);
+		// if (!parseline(tools->cleanline,tools))
+		// 	continue ;
+		// walking(tools->tree);
 		// execution(tools->tree, tools);
-		if (global_signal == SIGTERM) // TODO? or done
-			break ;
+		// if (global_signal == SIGTERM)
+		// TODO? or done
+		// 	break ;
 	}
 	clean_tools(tools);
 	return (0);
 }
-
-
 
 // CHECK IF THIS SHOULD BE A BUILTIN??? TODO TO DO
 /* Liretally checks if exit was typed into the line as the first command */

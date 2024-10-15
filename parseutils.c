@@ -6,7 +6,7 @@
 /*   By: myakoven <myakoven@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/06 19:16:34 by myakoven          #+#    #+#             */
-/*   Updated: 2024/10/14 13:28:52 by myakoven         ###   ########.fr       */
+/*   Updated: 2024/10/14 22:18:32 by myakoven         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ int	check_file_type(char *start, int fd_in_or_out, t_tools *tools)
 	else if (fileordir == 1 && start[0] == '<')
 		return (O_RDONLY);
 	else if (fileordir == 2 && start[0] == '<')
-		return (O_RDONLY | __O_DIRECTORY);
+		return (O_RDONLY | O_DIRECTORY);
 	return (0);
 	// else if (start[0] == '<' &&start[1] == '<')
 	// 		; //HEREDOC?

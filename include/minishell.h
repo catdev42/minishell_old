@@ -6,7 +6,7 @@
 /*   By: myakoven <myakoven@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 20:12:04 by myakoven          #+#    #+#             */
-/*   Updated: 2024/10/14 13:33:01 by myakoven         ###   ########.fr       */
+/*   Updated: 2024/10/14 22:20:10 by myakoven         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@
 # define UNSET "unset"
 # define ENV "env"
 # define EXIT "exit"
+// # define __O_DIRECTORY O_DIRECTORY
 /* error codes to send to error exit function error_exit(t_tools *tools,
 	int error)*/
 # define PIPEERROR 3
