@@ -3,62 +3,39 @@
 /*                                                        :::      ::::::::   */
 /*   exec.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: spitul <spitul@student.42berlin.de >       +#+  +:+       +#+        */
+/*   By: myakoven <myakoven@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/16 15:48:13 by spitul            #+#    #+#             */
-/*   Updated: 2024/10/10 20:33:46 by spitul           ###   ########.fr       */
+/*   Updated: 2024/10/15 12:35:45 by myakoven         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "include/minishell.h"
 
-// error msg need to go to stderr
-
-static void	init_builtin_array(char **b)
+/*forks if there is a pipe or a non builtin command else it
+executes without forking
+TODO - running minishell inside minishell*/
+void	running_msh(t_tools *tool)
 {
-	b[0] = "echo";
-	b[1] = "cd";
-	b[2] = "pwd";
-	b[3] = "export";
-	b[4] = "unset";
-	b[5] = "env";
-	b[6] = "exit";
-}
+	pid_t	pid;
+	int		status;
 
-int	check_builtin(char *s)
-{
-	int		a[7];
-	int		len;
-	char	*builtins[7];
-
-	init_builtin_array(builtins);
-	len = ft_strlen(s);
-	ft_bzero((void *)a, 7 * sizeof(int));
-	if (len == 4 && ft_strncmp(s, builtins[0], len) == 0)
-		a[0] = echo();
-	else if (len == 2 && ft_strncmp(s, builtins[1], len) == 0)
-		a[1] = cd();
-	else if (len == 3 && ft_strncmp(s, builtins[2], len) == 0)
-		a[2] = pwd();
-	else if (len == 6 && ft_strncmp(s, builtins[3], len) == 0)
-		a[3] = export();
-	else if (len == 5 && ft_strncmp(s, builtins[4], len) == 0)
-		a[4] = unset();
-	else if (len == 3 && ft_strncmp(s, builtins[5], len) == 0)
-		a[5] = env();
-	else if (len == 4 && ft_strncmp(s, builtins[6], len) == 0)
-		a[6] = ft_exit();
-	return (a[0] || a[1] || a[2] || a[3] || a[4] || a[5] || a[6]);
-}
-
-void	error_exec(t_execcmd *cmd)
-{
-	ft_putstr_fd("msh: ", 2);
-	ft_putstr_fd(strerror(errno), 2);
-	ft_putstr_fd(": ", 2);
-	//if
-	ft_putchar_fd(cmd->arg[0], 2);
-	ft_putstr_fd("\n", 2);
+	if ((tool->tree->type == PIPE) || (tool->tree->type != PIPE
+			&& (builtin_check_walk(tool->tree) == 0)))
+	{
+		pid = fork();
+		if (pid == -1)
+			exit(print_error); // this thing done right
+		if (pid == 0)
+			exec_cmd(tool->tree, tool);
+		waitpid(pid, &status, 0);
+		if (WIFEXITED(status))
+			tool->exit_code = WEXITSTATUS(status);
+		else if (WIFSIGNALED(status))
+			tool->exit_code = WTERMSIG(status) + 128;
+	}
+	else
+		exec_cmd(tool->tree, tool);
 }
 
 char	*check_cmd_in_path(char *path, t_execcmd *cmd)
@@ -71,7 +48,7 @@ char	*check_cmd_in_path(char *path, t_execcmd *cmd)
 	temp = ft_strjoin(path, "/");
 	if (!temp)
 		return (NULL);
-	cmdpath = ft_strjoin(temp, cmd->arg[0]);
+	cmdpath = ft_strjoin(temp, cmd->argv[0]);
 	free(temp);
 	if (!cmdpath)
 		return (NULL);
@@ -80,47 +57,47 @@ char	*check_cmd_in_path(char *path, t_execcmd *cmd)
 		if (access(cmdpath, X_OK) != 0) // cannot execute cannot access
 		{
 			free(cmdpath);
-			error_exec(cmd); // return here optimize
+			// error_exec(cmd); // return here optimize
 			return (NULL);
 		}
 		return (cmdpath);
 	}
-	// else if (access(cmdpath, X_OK) != 0) // insufficient rights
-	// 	// kommt das hier oder anderswo - ist es nur ein problem bei args?
-	// 	// printf("msh: permission denied %s\n", cmd->arg[0]);
+	// printf("msh: permission denied %s\n", cmd->argv[0]);
 	free(cmdpath);
 	return (NULL);
 }
 
 int	exec_path(char *pathcmd, t_execcmd *ecmd, t_tools *tool)
 {
-	pid_t	pid;
-	int		status;
-
-	pid = fork();
-	if (pid == -1)
-		exit(fork_error());
-	if (pid == 0)
-	{
-		if (execve(pathcmd, ecmd->arg, tool->env) == -1)
-			error_exec(ecmd);
-	}
-	else
-		waitpid(pid, &status, 0);
-	if (WIFEXITED(status))
-		tool->exit_code = WEXITSTATUS(status);
-	else if (WIFSIGNALED(status))
-		tool->exit_code = WTERMSIG(status) + 128;
-	return (0);
+	if (execve(pathcmd, ecmd->argv, tool->env) == -1)
+		error_exec(ecmd);
+	return (1);
 }
+
+// function still needs to be finished
 void	exec_shell(t_tools *tool, t_execcmd *ecmd)
 {
 	pid_t	pid;
+	char	*shlvl;
 
-	pid =  fork();
+	if (get_matrix_len(ecmd->argv) != 1)
+	{
+		print_error(NULL, "too many arguments", NULL);
+		return ; // how to exit to give the line back
+	}
+	pid = fork();
 	if (pid == -1)
-		exit(fork_error());
-		
+		print_errno_error(NULL, NULL, NULL);
+	// myakoven: this will print mash: strerror(errno) and exit(errno)
+	// error_exit(tool, FORKERROR); // i think i dont have the last version
+	if (pid == 0)
+	{
+		change_shlvl(tool);
+		if (execve("./minishell", ecmd->argv, tool->env) == -1)
+			print_errno_error(NULL, NULL, NULL);
+		// myakoven: this will print mash: strerror(errno) and exit(errno)
+		// error_exit(tool, EXECVEERROR);
+	}
 }
 
 void	check_cmd(t_tools *tool, t_execcmd *ecmd)
@@ -129,15 +106,17 @@ void	check_cmd(t_tools *tool, t_execcmd *ecmd)
 	char	*pathcmd;
 	char	**split_path;
 	int		i;
+	int		res;
 
 	i = 0;
+	res = 0;
 	pathcmd = NULL;
-	if (ft_strncmp(ecmd->arg[0], "./minishell", 11))
+	if (ft_strncmp(ecmd->argv[0], "minishell", 9))
 	{
 		exec_shell(tool, ecmd);
 		return ;
 	}
-	path = get_env_var(tool->env, "PATH");
+	path = get_var(tool->env, "PATH");
 	if (!path)
 		return ; // exit failure error_exit(  ****, 1);
 	split_path = ft_split(path, ":");
@@ -146,21 +125,21 @@ void	check_cmd(t_tools *tool, t_execcmd *ecmd)
 		return ; // exit failure error_exit(  ****, 1);
 	while (split_path[i])
 	{
-		pathcmd = check_cmd_in_path(split_path[i], ecmd->arg[0]);
+		pathcmd = check_cmd_in_path(split_path[i], ecmd->argv[0]);
 		if (pathcmd != NULL)
 		{
-			exec_path(pathcmd, ecmd, tool->env);
+			res = exec_path(pathcmd, ecmd, tool->env);
 			free(pathcmd);
 			break ;
 		}
 		i++;
 	}
-	if (!check_builtin(ecmd->arg[0]) && !pathcmd) //$?
-		error_exec(ecmd);                         // command not found
+	if (!run_builtin(ecmd->argv[0]) && res == 0) //$?
+		error_exec(ecmd);                        // command not found
 	free_tab(split_path);
 }
 
-void	exec_cmd(t_cmd *cmd, char **env)
+void	exec_cmd(t_cmd *cmd, t_tools *tool)
 {
 	t_execcmd	*ecmd;
 	t_redircmd	*rcmd;
@@ -169,7 +148,7 @@ void	exec_cmd(t_cmd *cmd, char **env)
 	if (cmd->type == EXEC)
 	{
 		ecmd = (t_execcmd *)cmd;
-		check_cmd(env, ecmd);
+		check_cmd(tool, ecmd);
 	}
 	else if (cmd->type == REDIR)
 	{
@@ -179,7 +158,7 @@ void	exec_cmd(t_cmd *cmd, char **env)
 	else if (cmd->type == PIPE)
 	{
 		pcmd = (t_pipecmd *)cmd;
-		pipe_cmd(pcmd);
+		pipe_cmd(pcmd, tool);
 	}
 	else
 		return (0);
@@ -194,9 +173,9 @@ void	exec_cmd(t_cmd *cmd, char **env)
 		return (FORK_ERROR);//dunno
 	if (pid == 0)
 	{
-		if (execve(pathcmd, cmd->arg, env) == -1)
+		if (execve(pathcmd, cmd->argv, env) == -1)
 		// better an error handling function
-			printf("msh: %s: no such file or directory\n", cmd->arg[0]);
+			printf("msh: %s: no such file or directory\n", cmd->argv[0]);
 	}
 	else
 		waitpid(pid, NULL, 0);

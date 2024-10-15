@@ -6,7 +6,7 @@
 /*   By: myakoven <myakoven@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 19:22:37 by myakoven          #+#    #+#             */
-/*   Updated: 2024/10/14 22:15:31 by myakoven         ###   ########.fr       */
+/*   Updated: 2024/10/15 12:37:01 by myakoven         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,20 +15,20 @@
 /*
 Error paths:
 Parsing:
-	if system error 
+	if system error
 		then exit (with cleaning)
-	else 
-		return 0 in all functions (except -1 in mode finding (MOVE TO EXECUTION))
+	else
+		return 0 in all functions (except
+			-1 in mode finding (MOVE TO EXECUTION))
 Execution (FORKS)
 		Print error and exit with errno
-		Waitpid catches the error, analyses to see if System Failure 
+		Waitpid catches the error, analyses to see if System Failure
 
 		If CRITICAL ERROR
 			(Program should exit immediately as oppposed to just terminate one fork and keep going)
 		else if just some error in a fork (like command not found)
-			terminate just that fork, keep going with the program		
+			terminate just that fork, keep going with the program
 */
-
 
 /* FOR MAIN PROCESS
 Input NULL or what to print in the 3 prositions:
@@ -63,8 +63,11 @@ Input NULL if  a parameter is not needed.
 ARG: input file name or command name
 ERRLINE: custor error message or strerror(errnum) is printed
 ERRARG: the thing inside of backticks if needed */
-int	print_errno_error(const char *arg, const char *errline, const char *errarg)
+int	print_errno_error(const char *arg, const char *errline, const char *errarg,
+		t_tools *tools)
 {
+	if (tools)
+		clean_tools(tools);
 	ft_putstr_fd("msh: ", 2);
 	if (arg)
 	{

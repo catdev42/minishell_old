@@ -6,7 +6,7 @@
 /*   By: myakoven <myakoven@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 20:12:04 by myakoven          #+#    #+#             */
-/*   Updated: 2024/10/14 22:20:10 by myakoven         ###   ########.fr       */
+/*   Updated: 2024/10/15 12:39:05 by myakoven         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,6 @@
 # define UNSET "unset"
 # define ENV "env"
 # define EXIT "exit"
-// # define __O_DIRECTORY O_DIRECTORY
 /* error codes to send to error exit function error_exit(t_tools *tools,
 	int error)*/
 # define PIPEERROR 3
@@ -67,12 +66,13 @@ char			*get_var(char **env, char *var);
 /************************/
 /******* ERROR.C ********/
 /************************/
+int				print_errno_error(const char *arg, const char *errline,
+					const char *errarg, t_tools *tools);
 int				error_exit(t_tools *tools, int error);
+struct s_cmd	*clean_execs(struct s_cmd *first, struct s_cmd *second);
 void			clean_tools(t_tools *tools);
 int				print_error(const char *arg, const char *errline,
 					const char *errarg);
-void			clean_tools(t_tools *tools);
-struct s_cmd	*clean_execs(struct s_cmd *first, struct s_cmd *second);
 /*char			**free_array(char **res, int nb);*/
 
 /************************/
