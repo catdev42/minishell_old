@@ -1,19 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   error.c                                            :+:      :+:    :+:   */
+/*   error.c      void	goodexit(tools)
+{
+	clean_tools(tools);
+	exit(0);
+}
+										:+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: myakoven <myakoven@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 19:22:37 by myakoven          #+#    #+#             */
-/*   Updated: 2024/10/15 12:37:01 by myakoven         ###   ########.fr       */
+/*   Updated: 2024/10/15 13:04:38 by myakoven         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "./include/minishell.h"
 
+/* A GOOD EXIT */
+void	goodexit(tools)
+{
+	clean_tools(tools);
+	exit(0);
+}
+
 /*
-Error paths:
+ERROR PATHS (please read):
 Parsing:
 	if system error
 		then exit (with cleaning)
@@ -25,7 +37,12 @@ Execution (FORKS)
 		Waitpid catches the error, analyses to see if System Failure
 
 		If CRITICAL ERROR
-			(Program should exit immediately as oppposed to just terminate one fork and keep going)
+			(Progrvoid	goodexit(tools)
+{
+	clean_tools(tools);
+	exit(0);
+}
+am should exit immediately as oppposed to just terminate one fork and keep going)
 		else if just some error in a fork (like command not found)
 			terminate just that fork, keep going with the program
 */
@@ -44,26 +61,31 @@ int	print_error(const char *arg, const char *errline, const char *errarg)
 		ft_putstr_fd(": ", 2);
 	}
 	if (errline)
-	{
 		ft_putstr_fd(errline, 2);
-		if (errarg)
-		{
-			ft_putstr_fd("`", 2);
-			ft_putstr_fd(errarg, 2);
-			ft_putstr_fd("\'", 2);
-		}
-		ft_putstr_fd("\n", 2);
+	// else
+	// 	ft_putstr_fd(strerror(errno), 2);
+	if (errarg)
+	{
+		ft_putstr_fd("`", 2);
+		ft_putstr_fd(errarg, 2);
+		ft_putstr_fd("\'", 2);
 	}
+	ft_putstr_fd("\n", 2);
 	return (0);
 }
 
-/* FOR FORK PROCESS
+/* FOR FORK PROCESvoid	goodexit(tools)
+{
+	clean_tools(tools);
+	exit(0);
+}
+S
 Input NULL if  a parameter is not needed.
 //??? What do subsequent exit return is critical error???
 ARG: input file name or command name
 ERRLINE: custor error message or strerror(errnum) is printed
 ERRARG: the thing inside of backticks if needed */
-int	print_errno_error(const char *arg, const char *errline, const char *errarg,
+int	print_errno_exit(const char *arg, const char *errline, const char *errarg,
 		t_tools *tools)
 {
 	if (tools)
@@ -85,8 +107,12 @@ int	print_errno_error(const char *arg, const char *errline, const char *errarg,
 		ft_putstr_fd("\'", 2);
 	}
 	ft_putstr_fd("\n", 2);
-	exit(errno);
+	if (tools->exit_code != 0)
+		exit(errno);
+	else
+		exit(1);
 }
+/*ABOVE: work in progress - when do we exit errno and when do we just exit 1?*/
 
 /*
 FOR EXITING!

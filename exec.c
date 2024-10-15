@@ -2,11 +2,13 @@
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   exec.c                                             :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
+/*                                                    +:+
+		+:	// myakoven: this will print mash: strerror(errno) and exit(errno)
++         +:+     */
 /*   By: myakoven <myakoven@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/16 15:48:13 by spitul            #+#    #+#             */
-/*   Updated: 2024/10/15 12:35:45 by myakoven         ###   ########.fr       */
+/*   Updated: 2024/10/15 13:20:31 by myakoven         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,30 +17,27 @@
 /*forks if there is a pipe or a non builtin command else it
 executes without forking
 TODO - running minishell inside minishell*/
-void	running_msh(t_tools *tool)
+void	running_msh(t_tools *tools)
 {
 	pid_t	pid;
 	int		status;
 
-	if ((tool->tree->type == PIPE) || (tool->tree->type != PIPE
-			&& (builtin_check_walk(tool->tree) == 0)))
+	if ((tools->tree->type == PIPE) || (tools->tree->type != PIPE
+			&& (builtin_check_walk(tools->tree) == 0)))
 	{
 		pid = fork();
 		if (pid == -1)
-			exit(print_error); // this thing done right
+			print_errno_exit(NULL, NULL, NULL, tools); // myakoven system fail
 		if (pid == 0)
-			exec_cmd(tool->tree, tool);
+			exec_cmd(tools->tree, tools);
 		waitpid(pid, &status, 0);
-		if (WIFEXITED(status))
-			tool->exit_code = WEXITSTATUS(status);
-		else if (WIFSIGNALED(status))
-			tool->exit_code = WTERMSIG(status) + 128;
+		check_system_fail(status, tools); // maykoven this also exits
 	}
 	else
-		exec_cmd(tool->tree, tool);
+		exec_cmd(tools->tree, tools);
 }
 
-char	*check_cmd_in_path(char *path, t_execcmd *cmd)
+char	*check_cmd_in_path(char *path, t_execcmd *cmd, t_tools *tools)
 {
 	char	*cmdpath;
 	char	*temp;
@@ -47,18 +46,17 @@ char	*check_cmd_in_path(char *path, t_execcmd *cmd)
 	temp = NULL;
 	temp = ft_strjoin(path, "/");
 	if (!temp)
-		return (NULL);
+		print_errno_exit(NULL, NULL, NULL, tools); // myakoven system fail
 	cmdpath = ft_strjoin(temp, cmd->argv[0]);
 	free(temp);
 	if (!cmdpath)
-		return (NULL);
+		return (NULL); // not failure, just path is not found yet
 	if (access(cmdpath, F_OK) == 0)
 	{
 		if (access(cmdpath, X_OK) != 0) // cannot execute cannot access
 		{
 			free(cmdpath);
-			// error_exec(cmd); // return here optimize
-			return (NULL);
+			print_errno_exit(NULL, NULL, NULL, tools); // myakoven
 		}
 		return (cmdpath);
 	}
@@ -67,11 +65,15 @@ char	*check_cmd_in_path(char *path, t_execcmd *cmd)
 	return (NULL);
 }
 
-int	exec_path(char *pathcmd, t_execcmd *ecmd, t_tools *tool)
+void	execute_path(char *pathcmd, t_execcmd *ecmd, t_tools *tool)
 {
-	if (execve(pathcmd, ecmd->argv, tool->env) == -1)
-		error_exec(ecmd);
-	return (1);
+	execve(pathcmd, ecmd->argv, tool->env) == -1;
+	free(pathcmd);
+	print_errno_exit(NULL, NULL, NULL, tool);
+	// myakoven
+	/* If this does not execute,
+	and take over the whole process,
+	then it fails and exits with error*/
 }
 
 // function still needs to be finished
@@ -87,19 +89,19 @@ void	exec_shell(t_tools *tool, t_execcmd *ecmd)
 	}
 	pid = fork();
 	if (pid == -1)
-		print_errno_error(NULL, NULL, NULL);
+		print_errno_exit(NULL, NULL, NULL, tool); // system error
 	// myakoven: this will print mash: strerror(errno) and exit(errno)
 	// error_exit(tool, FORKERROR); // i think i dont have the last version
 	if (pid == 0)
 	{
 		change_shlvl(tool);
 		if (execve("./minishell", ecmd->argv, tool->env) == -1)
-			print_errno_error(NULL, NULL, NULL);
+			print_errno_exit(NULL, NULL, NULL, tool);
 		// myakoven: this will print mash: strerror(errno) and exit(errno)
 		// error_exit(tool, EXECVEERROR);
 	}
 }
-
+/*myakoven... did not get to this one*/
 void	check_cmd(t_tools *tool, t_execcmd *ecmd)
 {
 	char	*path;
@@ -118,19 +120,21 @@ void	check_cmd(t_tools *tool, t_execcmd *ecmd)
 	}
 	path = get_var(tool->env, "PATH");
 	if (!path)
-		return ; // exit failure error_exit(  ****, 1);
+	{
+		// if path var fails, its a system wide issue
+		tool->exit_code = PATHVARFAIL;
+		print_errno_exit(NULL, "Path variable could not be found", NULL, tool);
+	}
 	split_path = ft_split(path, ":");
 	free(path);
 	if (!split_path)
-		return ; // exit failure error_exit(  ****, 1);
+		print_errno_exit(NULL, NULL, NULL, tool);
 	while (split_path[i])
 	{
-		pathcmd = check_cmd_in_path(split_path[i], ecmd->argv[0]);
+		pathcmd = check_cmd_in_path(split_path[i], ecmd->argv[0], tool);
 		if (pathcmd != NULL)
 		{
-			res = exec_path(pathcmd, ecmd, tool->env);
-			free(pathcmd);
-			break ;
+			execute_path(pathcmd, ecmd, tool->env); //this is a terminating command!
 		}
 		i++;
 	}
@@ -163,7 +167,6 @@ void	exec_cmd(t_cmd *cmd, t_tools *tool)
 	else
 		return (0);
 }
-
 /*void	_exec_cmd(char *pathcmd, t_execcmd *cmd, char **env)
 {
 	pid_t	pid;

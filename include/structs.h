@@ -6,7 +6,7 @@
 /*   By: myakoven <myakoven@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/13 20:00:21 by myakoven          #+#    #+#             */
-/*   Updated: 2024/10/10 22:04:58 by myakoven         ###   ########.fr       */
+/*   Updated: 2024/10/15 13:40:18 by myakoven         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,8 @@ struct						s_execcmd
 struct						s_redircmd
 {
 	int						type;
+
+	bool					append;
 	// 0xt thing redir or exec
 	struct s_cmd			*cmd;
 	// pointer to filename

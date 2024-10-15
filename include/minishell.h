@@ -6,13 +6,14 @@
 /*   By: myakoven <myakoven@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 20:12:04 by myakoven          #+#    #+#             */
-/*   Updated: 2024/10/15 12:39:05 by myakoven         ###   ########.fr       */
+/*   Updated: 2024/10/15 13:40:53 by myakoven         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
+# include <stdbool.h>
 # include <stdio.h>
 /* Keep on top */
 # include <readline/history.h>
@@ -24,7 +25,6 @@
 # include <errno.h>
 # include <fcntl.h>
 # include <signal.h>
-# include <stdbool.h>
 # include <stdlib.h>
 # include <string.h>
 # include <sys/stat.h>
@@ -41,10 +41,11 @@
 # define ENV "env"
 # define EXIT "exit"
 /* error codes to send to error exit function error_exit(t_tools *tools,
-	int error)*/
+		int error)*/
 # define PIPEERROR 3
 # define FORKERROR 4
 # define OOMERROR 1
+# define PATHVARFAIL 141
 
 // volatile sig_atomic_t	global_signal = 0;
 
@@ -66,7 +67,7 @@ char			*get_var(char **env, char *var);
 /************************/
 /******* ERROR.C ********/
 /************************/
-int				print_errno_error(const char *arg, const char *errline,
+int				print_errno_exit(const char *arg, const char *errline,
 					const char *errarg, t_tools *tools);
 int				error_exit(t_tools *tools, int error);
 struct s_cmd	*clean_execs(struct s_cmd *first, struct s_cmd *second);
@@ -74,6 +75,15 @@ void			clean_tools(t_tools *tools);
 int				print_error(const char *arg, const char *errline,
 					const char *errarg);
 /*char			**free_array(char **res, int nb);*/
+
+/************************/
+/********* EXEC *********/
+/************************/
+/*exec_utils*/
+void			check_system_fail(int status, t_tools *tools);
+void			change_shlvl(t_tools *tool);
+int				is_builtin(char *s);
+int				run_builtin(char *s);
 
 /************************/
 /******* INIT.C ********/
