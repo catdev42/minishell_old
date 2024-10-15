@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: myakoven <myakoven@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: spitul <spitul@student.42berlin.de >       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 20:12:04 by myakoven          #+#    #+#             */
-/*   Updated: 2024/10/15 13:40:53 by myakoven         ###   ########.fr       */
+/*   Updated: 2024/10/15 19:22:53 by spitul           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,10 +42,8 @@
 # define EXIT "exit"
 /* error codes to send to error exit function error_exit(t_tools *tools,
 		int error)*/
-# define PIPEERROR 3
-# define FORKERROR 4
-# define OOMERROR 1
-# define PATHVARFAIL 141
+# define SYSTEMFAIL 142
+# define FORKFAIL 141
 
 // volatile sig_atomic_t	global_signal = 0;
 

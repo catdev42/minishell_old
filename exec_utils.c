@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: myakoven <myakoven@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: spitul <spitul@student.42berlin.de >       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 10:01:36 by spitul            #+#    #+#             */
-/*   Updated: 2024/10/15 13:30:16 by myakoven         ###   ########.fr       */
+/*   Updated: 2024/10/15 19:28:19 by spitul           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,22 @@ void	check_system_fail(int status, t_tools *tools)
 		tools->exit_code = WEXITSTATUS(status);
 	else if (WIFSIGNALED(status))
 		tools->exit_code = WTERMSIG(status) + 128;
+		/* from slack sde-silv (Shenya)
+		while (i < env->procs)
+    {
+        waitpid(env->arr[i].pid, &status, 0);
+        if (WIFEXITED(status))
+            env->arr[i].status = WEXITSTATUS(status);
+        else if (WIFSIGNALED(status))
+        {
+            sig = WTERMSIG(status);
+            env->arr[i].status = 128 + sig;
+        }
+        i ++;
+    }
+    handle_sig_numbers(sig, status, env, i);
+    g_exit_status = env->arr[i - 1].status;
+		*/
 }
 
 void	change_shlvl(t_tools *tool)

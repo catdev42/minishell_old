@@ -6,7 +6,7 @@
 /*   By: spitul <spitul@student.42berlin.de >       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/24 16:34:23 by spitul            #+#    #+#             */
-/*   Updated: 2024/10/14 18:53:52 by spitul           ###   ########.fr       */
+/*   Updated: 2024/10/15 18:42:53 by spitul           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,8 +32,6 @@
 // unexpectedly before the writing process finishes. In this case,
 // the writing command (the one trying to send data to the pipe)
 //  will receive a SIGPIPE signal and often terminate.
-
-
 
 void	redir_cmd(t_redircmd *rcmd)
 {
@@ -95,7 +93,6 @@ void	pipe_cmd(t_pipecmd *pcmd, t_tools *tools)
 		tools->exit_code = WTERMSIG(status2) + 128;
 	cleanexit(tools); // check this
 }
-
 
 /* Checks if a path is a file or directory File: 1; Dir: 2; Neither: 0*/
 int	file_dir_noexist(const char *path, int fd_in_or_out)

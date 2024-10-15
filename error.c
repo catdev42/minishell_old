@@ -85,7 +85,7 @@ Input NULL if  a parameter is not needed.
 ARG: input file name or command name
 ERRLINE: custor error message or strerror(errnum) is printed
 ERRARG: the thing inside of backticks if needed */
-int	print_errno_exit(const char *arg, const char *errline, const char *errarg,
+int	print_errno_exit(const char *arg, const char *errline, int custom_fail,
 		t_tools *tools)
 {
 	if (tools)
@@ -100,17 +100,17 @@ int	print_errno_exit(const char *arg, const char *errline, const char *errarg,
 		ft_putstr_fd(errline, 2);
 	else
 		ft_putstr_fd(strerror(errno), 2);
-	if (errarg)
-	{
-		ft_putstr_fd("`", 2);
-		ft_putstr_fd(errarg, 2);
-		ft_putstr_fd("\'", 2);
-	}
+	// if (errarg)
+	// {
+	// 	ft_putstr_fd("`", 2);
+	// 	ft_putstr_fd(errarg, 2);
+	// 	ft_putstr_fd("\'", 2);
+	// }
 	ft_putstr_fd("\n", 2);
-	if (tools->exit_code != 0)
-		exit(errno);
+	if (custom_fail != 0)
+		exit(custom_fail);
 	else
-		exit(1);
+		exit(errno);
 }
 /*ABOVE: work in progress - when do we exit errno and when do we just exit 1?*/
 

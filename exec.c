@@ -67,7 +67,7 @@ char	*check_cmd_in_path(char *path, t_execcmd *cmd, t_tools *tools)
 
 void	execute_path(char *pathcmd, t_execcmd *ecmd, t_tools *tool)
 {
-	execve(pathcmd, ecmd->argv, tool->env) == -1;
+	execve(pathcmd, ecmd->argv, tool->env);
 	free(pathcmd);
 	print_errno_exit(NULL, NULL, NULL, tool);
 	// myakoven
@@ -113,6 +113,7 @@ void	check_cmd(t_tools *tool, t_execcmd *ecmd)
 	i = 0;
 	res = 0;
 	pathcmd = NULL;
+	res = run_builtin(ecmd->argv[0]);
 	if (ft_strncmp(ecmd->argv[0], "minishell", 9))
 	{
 		exec_shell(tool, ecmd);
@@ -122,7 +123,7 @@ void	check_cmd(t_tools *tool, t_execcmd *ecmd)
 	if (!path)
 	{
 		// if path var fails, its a system wide issue
-		tool->exit_code = PATHVARFAIL;
+		tool->exit_code = SYSTEMFAIL;
 		print_errno_exit(NULL, "Path variable could not be found", NULL, tool);
 	}
 	split_path = ft_split(path, ":");
@@ -134,13 +135,12 @@ void	check_cmd(t_tools *tool, t_execcmd *ecmd)
 		pathcmd = check_cmd_in_path(split_path[i], ecmd->argv[0], tool);
 		if (pathcmd != NULL)
 		{
-			execute_path(pathcmd, ecmd, tool->env); //this is a terminating command!
+			free_tab(split_path);
+			execute_path(pathcmd, ecmd, tool->env);//if this is terminating and we dont fork how will the path matrix be cleaned?
 		}
 		i++;
 	}
-	if (!run_builtin(ecmd->argv[0]) && res == 0) //$?
-		error_exec(ecmd);                        // command not found
-	free_tab(split_path);
+	print_errno_exit(ecmd->argv[0], "command not found", FORKFAIL, tool); //$?
 }
 
 void	exec_cmd(t_cmd *cmd, t_tools *tool)
