@@ -101,6 +101,7 @@ void	exec_shell(t_tools *tool, t_execcmd *ecmd)
 		// error_exit(tool, EXECVEERROR);
 	}
 }
+
 /*myakoven... did not get to this one*/
 void	check_cmd(t_tools *tool, t_execcmd *ecmd)
 {
@@ -108,12 +109,13 @@ void	check_cmd(t_tools *tool, t_execcmd *ecmd)
 	char	*pathcmd;
 	char	**split_path;
 	int		i;
-	int		res;
 
 	i = 0;
-	res = 0;
 	pathcmd = NULL;
-	res = run_builtin(ecmd->argv[0]);
+	if (is_builtin(ecmd->argv[0]))
+	{
+		if (run_builtin(ecmd->argv[0]) == -1)
+		
 	if (ft_strncmp(ecmd->argv[0], "minishell", 9))
 	{
 		exec_shell(tool, ecmd);
