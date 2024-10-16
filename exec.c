@@ -69,7 +69,7 @@ void	execute_path(char *pathcmd, t_execcmd *ecmd, t_tools *tool)
 {
 	execve(pathcmd, ecmd->argv, tool->env);
 	free(pathcmd);
-	print_errno_exit(NULL, NULL, NULL, tool);
+	print_errno_exit(NULL, NULL, NULL, tool); // why the third NULL
 	// myakoven
 	/* If this does not execute,
 	and take over the whole process,
@@ -83,13 +83,10 @@ void	exec_shell(t_tools *tool, t_execcmd *ecmd)
 	char	*shlvl;
 
 	if (get_matrix_len(ecmd->argv) != 1)
-	{
-		print_error(NULL, "too many arguments", NULL);
-		return ; // how to exit to give the line back
-	}
-	pid = fork();
-	if (pid == -1)
-		print_errno_exit(NULL, NULL, NULL, tool); // system error
+		print_errno_exit(NULL, "too many arguments", 141, tool);
+	// pid = fork(); // if not recognized as a builtin forking is not necessary
+	// if (pid == -1)
+	// 	print_errno_exit(NULL, NULL, NULL, tool); // system error
 	// myakoven: this will print mash: strerror(errno) and exit(errno)
 	// error_exit(tool, FORKERROR); // i think i dont have the last version
 	if (pid == 0)
@@ -114,8 +111,9 @@ void	check_cmd(t_tools *tool, t_execcmd *ecmd)
 	pathcmd = NULL;
 	if (is_builtin(ecmd->argv[0]))
 	{
-		if (run_builtin(ecmd->argv[0]) == -1)
-		
+		if (run_builtin(ecmd->argv[0]) == -1) //finish heute noch 16.10.
+		return ;
+	}
 	if (ft_strncmp(ecmd->argv[0], "minishell", 9))
 	{
 		exec_shell(tool, ecmd);
@@ -125,7 +123,7 @@ void	check_cmd(t_tools *tool, t_execcmd *ecmd)
 	if (!path)
 	{
 		// if path var fails, its a system wide issue
-		tool->exit_code = SYSTEMFAIL;
+		tool->exit_code = SYSTEMFAIL; //if this is in a fork, what happens - how does this get in the parents tool.exit_code
 		print_errno_exit(NULL, "Path variable could not be found", NULL, tool);
 	}
 	split_path = ft_split(path, ":");
@@ -159,7 +157,7 @@ void	exec_cmd(t_cmd *cmd, t_tools *tool)
 	else if (cmd->type == REDIR)
 	{
 		rcmd = (t_redircmd *)cmd;
-		redir_cmd(rcmd);
+		redir_cmd(rcmd, tool);
 	}
 	else if (cmd->type == PIPE)
 	{
@@ -167,7 +165,7 @@ void	exec_cmd(t_cmd *cmd, t_tools *tool)
 		pipe_cmd(pcmd, tool);
 	}
 	else
-		return (0);
+		return (1); // this
 }
 /*void	_exec_cmd(char *pathcmd, t_execcmd *cmd, char **env)
 {

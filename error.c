@@ -25,7 +25,7 @@ void	goodexit(tools)
 }
 
 /*
-ERROR PATHS (please read):
+ERROR PATHS (please read): me
 Parsing:
 	if system error
 		then exit (with cleaning)
