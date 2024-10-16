@@ -18,7 +18,7 @@
 #include "./include/minishell.h"
 
 /* A GOOD EXIT */
-void	goodexit(tools)
+void	goodexit(t_tools *tools)
 {
 	clean_tools(tools);
 	exit(0);
