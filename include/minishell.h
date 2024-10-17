@@ -6,7 +6,7 @@
 /*   By: spitul <spitul@student.42berlin.de >       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 20:12:04 by myakoven          #+#    #+#             */
-/*   Updated: 2024/10/15 19:22:53 by spitul           ###   ########.fr       */
+/*   Updated: 2024/10/16 19:13:28 by spitul           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,8 +65,8 @@ char			*get_var(char **env, char *var);
 /************************/
 /******* ERROR.C ********/
 /************************/
-int				print_errno_exit(const char *arg, const char *errline,
-					const char *errarg, t_tools *tools);
+int				print_errno_exit(const char *arg, const char *errline, int custom_fail,
+					t_tools *tools);
 int				error_exit(t_tools *tools, int error);
 struct s_cmd	*clean_execs(struct s_cmd *first, struct s_cmd *second);
 void			clean_tools(t_tools *tools);
@@ -82,6 +82,19 @@ void			check_system_fail(int status, t_tools *tools);
 void			change_shlvl(t_tools *tool);
 int				is_builtin(char *s);
 int				run_builtin(char *s);
+int				file_dir_noexist(const char *path, int fd_in_or_out);
+int				check_file_type(char *start, int fd_in_or_out, t_tools *tools);
+/* exec */
+void	exec_cmd(t_cmd *cmd, t_tools *tool);
+void	check_cmd(t_tools *tool, t_execcmd *ecmd);
+void	exec_shell(t_tools *tool, t_execcmd *ecmd);
+void	execute_path(char *pathcmd, t_execcmd *ecmd, t_tools *tool);
+char	*check_cmd_in_path(char *path, t_execcmd *cmd, t_tools *tools);
+void	running_msh(t_tools *tools);
+/* execredir */
+void	redir_cmd(t_redircmd *rcmd, t_tools *tool);
+pid_t	pipe_fork(int fd, t_cmd *cmd, int pfd, t_tools *tool);
+void	pipe_cmd(t_pipecmd *pcmd, t_tools *tools);
 
 /************************/
 /******* INIT.C ********/
@@ -133,9 +146,8 @@ struct s_cmd	*createredir(char *filestart, int mode, int fd, t_tools *tools);
 struct s_cmd	*parseargv(char *start, char *end, t_tools *tools);
 
 /***** parseutils.c *****/
-int				file_dir_noexist(const char *path, int fd_in_or_out);
+
 int				infile_or_outfile(char *start);
-int				check_file_type(char *start, int fd_in_or_out, t_tools *tools);
 char			*get_redir_path(char *redir, t_tools *tools);
 char			*get_token_end(char *namestart);
 

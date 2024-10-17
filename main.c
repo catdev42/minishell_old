@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: myakoven <myakoven@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: spitul <spitul@student.42berlin.de >       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 20:51:01 by myakoven          #+#    #+#             */
-/*   Updated: 2024/10/15 12:38:16 by myakoven         ###   ########.fr       */
+/*   Updated: 2024/10/16 19:10:05 by spitul           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,7 @@ int	shell_loop(t_tools *tools)
 		// if (global_signal == SIGTERM)
 		// TODO? or done
 		// 	break ;
+		running_msh(tools);
 	}
 	clean_tools(tools);
 	return (0);

@@ -18,14 +18,14 @@
 #include "./include/minishell.h"
 
 /* A GOOD EXIT */
-void	goodexit(tools)
+void	goodexit(t_tools *tools)
 {
 	clean_tools(tools);
 	exit(0);
 }
 
 /*
-ERROR PATHS (please read):
+ERROR PATHS (please read): me
 Parsing:
 	if system error
 		then exit (with cleaning)

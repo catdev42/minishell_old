@@ -6,7 +6,7 @@
 /*   By: spitul <spitul@student.42berlin.de >       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 10:01:36 by spitul            #+#    #+#             */
-/*   Updated: 2024/10/15 19:28:19 by spitul           ###   ########.fr       */
+/*   Updated: 2024/10/16 18:40:17 by spitul           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,28 +20,38 @@
  */
 void	check_system_fail(int status, t_tools *tools)
 {
-	// PATHVARFAIL  141 is system failure
-	//(if we cant find path fariable the whole this is a bust)
+	int	sig;
+	
 	if (WIFEXITED(status))
-		tools->exit_code = WEXITSTATUS(status);
+		{
+			tools->exit_code = WEXITSTATUS(status);
+			if (tools->exit_code == 142)
+				exit(142); //where is it catched and interpreted
 	else if (WIFSIGNALED(status))
-		tools->exit_code = WTERMSIG(status) + 128;
-		/* from slack sde-silv (Shenya)
-		while (i < env->procs)
-    {
-        waitpid(env->arr[i].pid, &status, 0);
-        if (WIFEXITED(status))
-            env->arr[i].status = WEXITSTATUS(status);
-        else if (WIFSIGNALED(status))
-        {
-            sig = WTERMSIG(status);
-            env->arr[i].status = 128 + sig;
-        }
-        i ++;
-    }
-    handle_sig_numbers(sig, status, env, i);
-    g_exit_status = env->arr[i - 1].status;
-		*/
+	{
+		sig = WTERMSIG(status);
+		if (sig == SIGSEGV) || sig == SIGBUS || sig == SIGFPE || sig == SIGILL 
+			|| sig == SIGABRT || sig == SIGKILL || sig == SIGSYS)
+		tools->exit_code = sig + 128;
+		error_exit(tools, 0);
+	}
+}
+	/* from slack sde-silv (Shenya)
+	while (i < env->procs)
+{
+	waitpid(env->arr[i].pid, &status, 0);
+	if (WIFEXITED(status))
+		env->arr[i].status = WEXITSTATUS(status);
+	else if (WIFSIGNALED(status))
+	{
+		sig = WTERMSIG(status);
+		env->arr[i].status = 128 + sig;
+	}
+	i ++;
+}
+handle_sig_numbers(sig, status, env, i);
+g_exit_status = env->arr[i - 1].status;
+	*/
 }
 
 void	change_shlvl(t_tools *tool)
