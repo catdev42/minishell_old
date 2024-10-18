@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execredir.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: spitul <spitul@student.42berlin.de >       +#+  +:+       +#+        */
+/*   By: myakoven <myakoven@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/24 16:34:23 by spitul            #+#    #+#             */
-/*   Updated: 2024/10/18 20:29:23 by spitul           ###   ########.fr       */
+/*   Updated: 2024/10/18 21:40:20 by myakoven         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@
 void	redir_cmd(t_redircmd *rcmd, t_tools *tool)
 {
 	rcmd->mode = check_file_type(rcmd, rcmd->fd);
-	if (rcmd->mode == 0)
+	if (rcmd->mode == -1)
 		return ; // not sure about this - is a return enough in all cases
 	close(rcmd->fd);
 	rcmd->fd = open(rcmd->file, rcmd->mode, 0644); // where to close it?
