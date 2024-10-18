@@ -12,7 +12,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "include/minishell.h"
+#include "./include/minishell.h"
 
 /*forks if there is a pipe or a non builtin command else it
 executes without forking
@@ -27,7 +27,7 @@ void	running_msh(t_tools *tools)
 	{
 		pid = fork();
 		if (pid == -1)
-			print_errno_exit(NULL, NULL, NULL, tools); // myakoven system fail
+			print_errno_exit(NULL, NULL, 0, tools); // myakoven system fail
 		if (pid == 0)
 			exec_cmd(tools->tree, tools);
 		waitpid(pid, &status, 0);
@@ -46,7 +46,7 @@ char	*check_cmd_in_path(char *path, t_execcmd *cmd, t_tools *tools)
 	temp = NULL;
 	temp = ft_strjoin(path, "/");
 	if (!temp)
-		print_errno_exit(NULL, NULL, NULL, tools); // myakoven system fail
+		print_errno_exit(NULL, NULL, 0, tools); // myakoven system fail
 	cmdpath = ft_strjoin(temp, cmd->argv[0]);
 	free(temp);
 	if (!cmdpath)
@@ -56,7 +56,7 @@ char	*check_cmd_in_path(char *path, t_execcmd *cmd, t_tools *tools)
 		if (access(cmdpath, X_OK) != 0) // cannot execute cannot access
 		{
 			free(cmdpath);
-			print_errno_exit(NULL, NULL, NULL, tools); // myakoven
+			print_errno_exit(NULL, NULL, 0, tools); // myakoven
 		}
 		return (cmdpath);
 	}
@@ -79,27 +79,27 @@ void	execute_path(char *pathcmd, t_execcmd *ecmd, t_tools *tool)
 // myakoven Renaming to exec_new_minishell
 void	exec_new_minishell(t_tools *tool, t_execcmd *ecmd)
 {
-	pid_t	pid;
+	//pid_t	pid;
 	char	*shlvl;
 
 	if (get_matrix_len(ecmd->argv) != 1)
 		print_errno_exit(NULL, "too many arguments", 141, tool);
+	shlvl = NULL;
 	// pid = fork(); // if not recognized as a builtin forking is not necessary
 	// if (pid == -1)
 	// 	print_errno_exit(NULL, NULL, NULL, tool); // system error
 	// myakoven: this will print mash: strerror(errno) and exit(errno)
 	// error_exit(tool, FORKERROR); // i think i dont have the last version
-	if (pid == 0)
+	//if (pid == 0)
 	{
 		change_shlvl(tool);
 		if (execve("./minishell", ecmd->argv, tool->env) == -1)
-			print_errno_exit(NULL, NULL, NULL, tool);
+			print_errno_exit(NULL, NULL, 0, tool);
 		// myakoven: this will print mash: strerror(errno) and exit(errno)
 		// error_exit(tool, EXECVEERROR);
 	}
 }
 
-/*myakoven... did not get to this one*/
 void	check_cmd(t_tools *tool, t_execcmd *ecmd)
 {
 	char	*path;
@@ -111,7 +111,7 @@ void	check_cmd(t_tools *tool, t_execcmd *ecmd)
 	pathcmd = NULL;
 	if (is_builtin(ecmd->argv[0]))
 	{
-		if (run_builtin(ecmd->argv[0]) == -1) // finish heute noch 16.10.
+		if (run_builtin(ecmd) == -1) // finish heute noch 16.10.
 			return ;
 	}
 	if (ft_strncmp(ecmd->argv[0], "minishell", 9))
@@ -123,17 +123,17 @@ void	check_cmd(t_tools *tool, t_execcmd *ecmd)
 	if (!path)
 		print_errno_exit(NULL, "PATH variable not found", SYSTEMFAIL, tool);
 	// if path var fails, its a system wide issue
-	split_path = ft_split(path, ":");
+	split_path = ft_split(path, ':');
 	free(path);
 	if (!split_path)
-		print_errno_exit(NULL, NULL, NULL, tool);
+		print_errno_exit(NULL, NULL, 0, tool);
 	while (split_path[i])
 	{
-		pathcmd = check_cmd_in_path(split_path[i], ecmd->argv[0], tool);
+		pathcmd = check_cmd_in_path(split_path[i], ecmd, tool);
 		if (pathcmd != NULL)
 		{
-			free_tab(split_path);
-			execute_path(pathcmd, ecmd, tool->env);
+			ft_freetab(split_path);
+			execute_path(pathcmd, ecmd, tool);
 			// execve(pathcmd, ecmd->argv, tool->env); 
 			// we can just put execve here since we break, free and error exit on fafilure
 			break;
@@ -168,8 +168,8 @@ void	exec_cmd(t_cmd *cmd, t_tools *tool)
 		pcmd = (t_pipecmd *)cmd;
 		pipe_cmd(pcmd, tool);
 	}
-	else
-		return (1); // this
+	// else
+	// 	return (1); // this
 }
 /*void	_exec_cmd(char *pathcmd, t_execcmd *cmd, char **env)
 {

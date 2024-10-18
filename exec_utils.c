@@ -6,11 +6,11 @@
 /*   By: spitul <spitul@student.42berlin.de >       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 10:01:36 by spitul            #+#    #+#             */
-/*   Updated: 2024/10/16 18:40:17 by spitul           ###   ########.fr       */
+/*   Updated: 2024/10/18 19:52:44 by spitul           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "include/minishell.h"
+#include "./include/minishell.h"
 
 /**
  * this needs to checkthe exit code, determine if its a fatal errno, and exit...
@@ -21,21 +21,22 @@
 void	check_system_fail(int status, t_tools *tools)
 {
 	int	sig;
-	
+
 	if (WIFEXITED(status))
-		{
-			tools->exit_code = WEXITSTATUS(status);
-			if (tools->exit_code == 142)
-				exit(142); //where is it catched and interpreted
-	else if (WIFSIGNALED(status))
 	{
-		sig = WTERMSIG(status);
-		if (sig == SIGSEGV) || sig == SIGBUS || sig == SIGFPE || sig == SIGILL 
+		tools->exit_code = WEXITSTATUS(status);
+		if (tools->exit_code == 142)
+			exit(142); // where is it catched and interpreted
+		else if (WIFSIGNALED(status))
+		{
+			sig = WTERMSIG(status);
+			if (sig == SIGSEGV || sig == SIGBUS || sig == SIGFPE
+				|| sig == SIGILL 
 			|| sig == SIGABRT || sig == SIGKILL || sig == SIGSYS)
 		tools->exit_code = sig + 128;
-		error_exit(tools, 0);
+			error_exit(tools, 0);
+		}
 	}
-}
 	/* from slack sde-silv (Shenya)
 	while (i < env->procs)
 {
@@ -85,24 +86,24 @@ int	is_builtin(char *s)
 	return (a);
 }
 
-int	run_builtin(char *s)
+int	run_builtin(t_execcmd *cmd)
 {
 	int	a;
 
 	a = 0;
-	if (ft_strncmp(s, ECHO, 5) == 0)
+	if (ft_strncmp(cmd->argv[0], ECHO, 5) == 0)
 		a = echo();
-	else if (ft_strncmp(s, CD, 3) == 0)
+	else if (ft_strncmp(cmd->argv[0], CD, 3) == 0)
 		a = cd();
-	else if (ft_strncmp(s, PWD, 4) == 0)
-		a = pwd();
-	else if (ft_strncmp(s, EXPORT, 7) == 0)
+	else if (ft_strncmp(cmd->argv[0], PWD, 4) == 0)
+		a = pwd(cmd);
+	else if (ft_strncmp(cmd->argv[0], EXPORT, 7) == 0)
 		a = export();
-	else if (ft_strncmp(s, UNSET, 6) == 0)
+	else if (ft_strncmp(cmd->argv[0], UNSET, 6) == 0)
 		a = unset();
-	else if (ft_strncmp(s, ENV, 4) == 0)
+	else if (ft_strncmp(cmd->argv[0], ENV, 4) == 0)
 		a = env();
-	else if (ft_strncmp(s, EXIT, 5) == 0)
+	else if (ft_strncmp(cmd->argv[0], EXIT, 5) == 0)
 		a = ft_exit();
 	return (a);
 }

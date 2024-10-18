@@ -1,8 +1,10 @@
 {
     "files.associations": {
-        "format": "c",
-        "complex": "c",
-        "unistd.h": "c",
-        "minishell.h": "c"
-    }
+		"format": "c",
+		"complex": "c",
+		"unistd.h": "c",
+		"minishell.h": "c",
+		"builtins.h": "c",
+		"structs.h": "c"
+	}
 }

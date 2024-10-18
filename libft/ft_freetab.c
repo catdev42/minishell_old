@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_freetab.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: myakoven <myakoven@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: spitul <spitul@student.42berlin.de >       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 16:09:28 by myakoven          #+#    #+#             */
-/*   Updated: 2024/10/10 22:12:42 by myakoven         ###   ########.fr       */
+/*   Updated: 2024/10/18 20:35:34 by spitul           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,16 +14,14 @@
 
 /* Put in array and the number of elements you would like to free 
 or 0 if you don't know, hopefully the array is NULL terminated in that case */
-void	ft_freetab(char **arr, int len)
+void	ft_freetab(char **arr)
 {
 	int	i;
 
 	i = 0;
 	if (!arr)
 		return ;
-	if (len <= 0)
-		len = INT_MAX;
-	while (arr[i] && i < len)
+	while (arr[i])
 		free(arr[i++]);
 	free(arr);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: myakoven <myakoven@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: spitul <spitul@student.42berlin.de >       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 19:07:28 by spitul            #+#    #+#             */
-/*   Updated: 2024/10/09 23:54:12 by myakoven         ###   ########.fr       */
+/*   Updated: 2024/10/18 20:36:30 by spitul           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ char	**copy_env(t_tools *tools, char **env)
 		envp[i] = ft_strdup(env[i]);
 		if (!envp[i])
 		{
-			ft_freetab(env, len_pointers);
+			ft_freetab(env);
 			return (NULL);
 		}
 		i++;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execredir.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: myakoven <myakoven@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: spitul <spitul@student.42berlin.de >       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/24 16:34:23 by spitul            #+#    #+#             */
-/*   Updated: 2024/10/17 20:47:13 by myakoven         ###   ########.fr       */
+/*   Updated: 2024/10/18 20:29:23 by spitul           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,14 +22,14 @@
 // maybe open dir w/ opendir
 void	redir_cmd(t_redircmd *rcmd, t_tools *tool)
 {
-	rcmd->mode = check_file_type(rcmd, rcmd->fd, tool);
+	rcmd->mode = check_file_type(rcmd, rcmd->fd);
 	if (rcmd->mode == 0)
 		return ; // not sure about this - is a return enough in all cases
 	close(rcmd->fd);
 	rcmd->fd = open(rcmd->file, rcmd->mode, 0644); // where to close it?
 	if (rcmd->fd == -1)
 	{
-		print_errno_exit(NULL, strerror(errno), NULL, tool);
+		print_errno_exit(NULL, strerror(errno), 0, tool);
 			// but maybe no exit needed dunno dunno
 		// UNFINISHED!
 	}

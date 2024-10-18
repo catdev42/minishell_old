@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_utils2.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: myakoven <myakoven@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: spitul <spitul@student.42berlin.de >       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/16 14:55:08 by spitul            #+#    #+#             */
-/*   Updated: 2024/10/17 20:45:13 by myakoven         ###   ########.fr       */
+/*   Updated: 2024/10/18 20:24:55 by spitul           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ int	file_dir_noexist(const char *path, int fd_in_or_out)
 
 /* Return the MODE necessary for OPEN() file or dir */
 
-int	check_file_type(t_redircmd *rcmd, int fd_in_or_out, t_tools *tools)
+int	check_file_type(t_redircmd *rcmd, int fd_in_or_out)//took the tools out cause not used
 {
 	char				*filepath;
 	int					fileordir;
@@ -73,3 +73,5 @@ int	check_file_type(t_redircmd *rcmd, int fd_in_or_out, t_tools *tools)
 		return (O_RDONLY | __O_DIRECTORY);
 	return (0);
 }
+
+

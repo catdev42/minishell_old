@@ -141,7 +141,7 @@ void	clean_tools(t_tools *tools)
 {
 	reset_tools(tools);
 	if (tools->env)
-		ft_freetab(tools->env, INT_MAX);
+		ft_freetab(tools->env);
 }
 
 struct s_cmd	*clean_execs(struct s_cmd *first, struct s_cmd *second)
