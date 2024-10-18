@@ -22,6 +22,7 @@ int	running_msh(t_tools *tools)
 	// pid_t	pid;
 	// int		status;
 
+	// status = 0;
 	if (!tools->tree)
 		return (0);
 	if ((tools->tree->type == PIPE) || (tools->tree->type != PIPE
@@ -74,7 +75,7 @@ void	execute_path(char *pathcmd, t_execcmd *ecmd, t_tools *tool)
 {
 	execve(pathcmd, ecmd->argv, tool->env);
 	free(pathcmd);
-	print_errno_exit(NULL, NULL, 0, tool); 
+	print_errno_exit(NULL, NULL, 0, tool);
 }
 
 // function still needs to be finished
@@ -116,7 +117,6 @@ void	check_cmd(t_tools *tool, t_execcmd *ecmd)
 		if (run_builtin(ecmd) == -1) // finish heute noch 16.10.
 			return ;
 	}
-	//WHY?
 	if (ft_strncmp(ecmd->argv[0], "minishell", 9) == 0)
 	{
 		exec_new_minishell(tool, ecmd);

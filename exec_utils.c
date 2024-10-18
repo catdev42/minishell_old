@@ -6,7 +6,7 @@
 /*   By: spitul <spitul@student.42berlin.de >       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 10:01:36 by spitul            #+#    #+#             */
-/*   Updated: 2024/10/18 19:52:44 by spitul           ###   ########.fr       */
+/*   Updated: 2024/10/18 21:23:31 by spitul           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,32 +27,17 @@ void	check_system_fail(int status, t_tools *tools)
 		tools->exit_code = WEXITSTATUS(status);
 		if (tools->exit_code == 142)
 			exit(142); // where is it catched and interpreted
-		else if (WIFSIGNALED(status))
-		{
-			sig = WTERMSIG(status);
-			if (sig == SIGSEGV || sig == SIGBUS || sig == SIGFPE
-				|| sig == SIGILL 
-			|| sig == SIGABRT || sig == SIGKILL || sig == SIGSYS)
-		tools->exit_code = sig + 128;
-			error_exit(tools, 0);
-		}
 	}
-	/* from slack sde-silv (Shenya)
-	while (i < env->procs)
-{
-	waitpid(env->arr[i].pid, &status, 0);
-	if (WIFEXITED(status))
-		env->arr[i].status = WEXITSTATUS(status);
 	else if (WIFSIGNALED(status))
 	{
 		sig = WTERMSIG(status);
-		env->arr[i].status = 128 + sig;
+		if (sig == SIGSEGV || sig == SIGBUS || sig == SIGFPE || sig == SIGILL
+			|| sig == SIGABRT || sig == SIGKILL || sig == SIGSYS)
+			tools->exit_code = sig + 128;
+		error_exit(tools, 0);
 	}
-	i ++;
-}
-handle_sig_numbers(sig, status, env, i);
-g_exit_status = env->arr[i - 1].status;
-	*/
+	else
+		exit(0); // temporary?
 }
 
 void	change_shlvl(t_tools *tool)
@@ -107,3 +92,20 @@ int	run_builtin(t_execcmd *cmd)
 		a = ft_exit();
 	return (a);
 }
+
+/* from slack sde-silv (Shenya)
+while (i < env->procs)
+{
+waitpid(env->arr[i].pid, &status, 0);
+if	(WIFEXITED(status))
+	env->arr[i].status = WEXITSTATUS(status);
+else if	(WIFSIGNALED(status))
+{
+	sig = WTERMSIG(status);
+	env->arr[i].status = 128 + sig;
+}
+i ++;
+}
+handle_sig_numbers(sig, status, env, i);
+g_exit_status = env->arr[i - 1].status;
+*/
