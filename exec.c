@@ -76,29 +76,29 @@ void	run_pipe(t_pipecmd *pcmd, t_tools *tools)
 	pid_t	pid2;
 
 	if (pipe(pipefd) == -1)
-		exit(pipe_error(pcmd));
+		print_errno_exit(NULL, NULL, 0, tools);
 	pid1 = fork();
 	if (pid1 == -1)
-		exit(fork_error());
+		print_errno_exit(NULL, NULL, 0, tools);
 	if (pid1 == 0)
 	{
 		close(pipefd[0]);
 		dup2(pipefd[1], STDOUT_FILENO);
 		close(pipefd[1]);
-		handle_node(pcmd->left, tools); //terminating
+		handle_node(pcmd->left, tools); // terminating
 	}
 	close(pipefd[1]);
 	waitpid(pid1, &status1, 0); // check the sleep situation
 	check_system_fail(status1, tools);
 	pid2 = fork();
 	if (pid2 == -1)
-		exit(fork_error());
+		print_errno_exit(NULL, NULL, 0, tools);
 	if (pid2 == 0)
 	{
 		close(pipefd[1]);
 		dup2(pipefd[0], STDIN_FILENO);
 		close(pipefd[0]);
-		handle_node(pcmd->right, tools); //terminating
+		handle_node(pcmd->right, tools); // terminating
 	}
 	close(pipefd[0]);
 	waitpid(pid2, &status2, 0);
