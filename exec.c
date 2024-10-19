@@ -67,7 +67,7 @@ void	handle_node(t_cmd *cmd, t_tools *tool)
 
 /* function forks and sets up and manages pipes*/
 
-void	pipe_cmd(t_pipecmd *pcmd, t_tools *tools)
+void	run_pipe(t_pipecmd *pcmd, t_tools *tools)
 {
 	int		pipefd[2];
 	int		status1;
