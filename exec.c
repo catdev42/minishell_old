@@ -109,19 +109,19 @@ void	run_pipe(t_pipecmd *pcmd, t_tools *tools)
 // maybe open dir w/ opendir
 /*MYAKOVEN: I think this function only need to get the mode,
 	all other information is already written*/
-void	run_redir(t_redircmd *rcmd, t_tools *tool)
+int	run_redir(t_redircmd *rcmd, t_tools *tool)
 {
 	rcmd->mode = check_file_type(rcmd, rcmd->fd);
 	if (rcmd->mode == -1 && tool->isfork)
 		exit(1); // not sure about this - is a return enough in all cases
 	else
 		return (0);
-	close(rcmd->fd); //close(0) 
-	rcmd->fd = open(rcmd->file, rcmd->mode, 0644); // opening at fd 0 if zero was closed
+	close(rcmd->fd);                               // close(0)
+	rcmd->fd = open(rcmd->file, rcmd->mode, 0644);
+		// opening at fd 0 if zero was closed
 	if (rcmd->fd == -1)
 	{
 		print_errno_exit(NULL, strerror(errno), 0, tool);
-
 	}
 	handle_node(rcmd->cmd, tool);
 }
@@ -145,6 +145,12 @@ void	run_exec_node(t_tools *tool, t_execcmd *ecmd)
 	{
 		exec_new_minishell(tool, ecmd);
 		return ;
+	}
+	if (access(ecmd->argv[0], F_OK) == 0)
+	{
+		if (access(ecmd->argv[0], X_OK) != 0)
+			print_errno_exit(NULL, NULL, 0, tool);
+		execute_execve(ecmd->argv[0], ecmd, tool);
 	}
 	path = get_var(tool->env, "PATH");
 	if (!path)

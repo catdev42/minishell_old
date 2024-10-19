@@ -6,7 +6,7 @@
 /*   By: spitul <spitul@student.42berlin.de >       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 20:12:04 by myakoven          #+#    #+#             */
-/*   Updated: 2024/10/19 20:46:39 by spitul           ###   ########.fr       */
+/*   Updated: 2024/10/19 22:07:59 by spitul           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,7 @@ void			execute_execve(char *pathcmd, t_execcmd *ecmd, t_tools *tool);
 char			*check_cmd_path(char *path, t_execcmd *cmd, t_tools *tools);
 int				running_msh(t_tools *tools);
 /* execredir */
-void			run_redir(t_redircmd *rcmd, t_tools *tool);
+int			run_redir(t_redircmd *rcmd, t_tools *tool);
 pid_t			pipe_fork(int fd, t_cmd *cmd, int pfd, t_tools *tool);
 void			run_pipe(t_pipecmd *pcmd, t_tools *tools);
 
