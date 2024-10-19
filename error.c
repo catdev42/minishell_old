@@ -88,8 +88,6 @@ ERRARG: the thing inside of backticks if needed */
 int	print_errno_exit(const char *arg, const char *errline, int custom_fail,
 		t_tools *tools)
 {
-	if (tools)
-		clean_tools(tools);
 	ft_putstr_fd("msh: ", 2);
 	if (arg)
 	{
@@ -107,7 +105,9 @@ int	print_errno_exit(const char *arg, const char *errline, int custom_fail,
 	// 	ft_putstr_fd("\'", 2);
 	// }
 	ft_putstr_fd("\n", 2);
-	if (custom_fail != 0)
+	if (tools)
+		clean_tools(tools);
+	if (custom_fail == 141 || custom_fail == 142)
 		exit(custom_fail);
 	else
 		exit(errno);
