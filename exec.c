@@ -3,14 +3,12 @@
 /*                                                        :::      ::::::::   */
 /*   exec.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: myakoven <myakoven@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: spitul <spitul@student.42berlin.de >       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/18 23:23:33 by myakoven          #+#    #+#             */
-/*   Updated: 2024/10/18 23:26:50 by myakoven         ###   ########.fr       */
+/*   Created: 2024/10/18 23:23:33 by spitul          #+#    #+#             */
+/*   Updated: 2024/10/19 17:33:20 by spitul           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-
 
 #include "./include/minishell.h"
 
@@ -85,11 +83,13 @@ void	run_pipe(t_pipecmd *pcmd, t_tools *tools)
 
 /* function forks and sets up and manages pipes*/
 /* Myakoven: What are these variables? */
+/* pfd, fd = for stdin, stdout and reading or writing end of pipes*/
 pid_t	pipe_fork(int fd, t_cmd *cmd, int pfd, t_tools *tool)
 {
 	int	pipefd[2];
 	int	pid;
 
+	printf("here i am before fork with std %d\n", fd);
 	if (pipe(pipefd) == -1)
 		print_errno_exit("pipe", NULL, 141, tool);
 	pid = fork();
@@ -97,21 +97,23 @@ pid_t	pipe_fork(int fd, t_cmd *cmd, int pfd, t_tools *tool)
 		print_errno_exit("fork", NULL, 141, tool);
 	if (pid == 0)
 	{
+		printf("child\n");
 		close(pipefd[pfd]);
 		dup2(pipefd[fd], fd);
+		printf("after dup2 with fd %d\n", fd);
 		close(pipefd[fd]);
 		handle_node(cmd, tool);
 	}
 	else
 	{
-		close(pipefd[0]);
-		close(pipefd[1]);
+		if (fd == 0)
+			close(pipefd[1]);
+		else if (fd == 1)
+			close(pipefd[1]);
 	}
 	// Waitpid?
 	return (pid);
 }
-
-
 
 // maybe open dir w/ opendir
 /*MYAKOVEN: I think this function only need to get the mode,
@@ -179,9 +181,6 @@ void	run_cmd(t_tools *tool, t_execcmd *ecmd)
 	free(cmdpath);
 	print_errno_exit(ecmd->argv[0], "command not found", FORKFAIL, tool); //$?
 }
-
-
-
 
 //**********************************************************************
 // Broken Pipe Error (SIGPIPE): A broken pipe can
