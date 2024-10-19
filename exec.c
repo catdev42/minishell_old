@@ -25,6 +25,7 @@ int	running_msh(t_tools *tools)
 	if ((tools->tree->type == PIPE) || (tools->tree->type != PIPE
 			&& (builtin_check_walk(tools->tree) == 0)))
 	{
+		tools->isfork = 1;
 		// pid = fork();
 		// if (pid == -1)
 		// 	print_errno_exit(NULL, NULL, 0, tools); // myakoven system fail
@@ -48,7 +49,7 @@ void	handle_node(t_cmd *cmd, t_tools *tool)
 	if (cmd->type == EXEC)
 	{
 		ecmd = (t_execcmd *)cmd;
-		run_cmd(tool, ecmd);
+		run_exec_node(tool, ecmd);
 	}
 	else if (cmd->type == REDIR)
 	{
@@ -111,27 +112,21 @@ void	run_pipe(t_pipecmd *pcmd, t_tools *tools)
 void	run_redir(t_redircmd *rcmd, t_tools *tool)
 {
 	rcmd->mode = check_file_type(rcmd, rcmd->fd);
-	if (rcmd->mode == -1)
-		return ;      // not sure about this - is a return enough in all cases
-	close(rcmd->fd); // I don't thin we should close standard in or out here...
-	/*
-	This space does not store the fd of an open file, it just stores whether
-	it is an infile (standard in) or an outfile (standard out)
-	rcmd->fd is alread written during parsing
-	the file is only opened in the same place where it is redirected to std in or out
-	*/
-	rcmd->fd = open(rcmd->file, rcmd->mode, 0644); // where to close it?
-	// I am not sure why this file is getting opened here...
+	if (rcmd->mode == -1 && tool->isfork)
+		exit(1); // not sure about this - is a return enough in all cases
+	else
+		return (0);
+	close(rcmd->fd); //close(0) 
+	rcmd->fd = open(rcmd->file, rcmd->mode, 0644); // opening at fd 0 if zero was closed
 	if (rcmd->fd == -1)
 	{
 		print_errno_exit(NULL, strerror(errno), 0, tool);
-		// but maybe no exit needed dunno dunno
-		// UNFINISHED!
+
 	}
 	handle_node(rcmd->cmd, tool);
 }
 
-void	run_cmd(t_tools *tool, t_execcmd *ecmd)
+void	run_exec_node(t_tools *tool, t_execcmd *ecmd)
 {
 	char	*path;
 	char	*cmdpath;
@@ -140,10 +135,11 @@ void	run_cmd(t_tools *tool, t_execcmd *ecmd)
 
 	i = 0;
 	cmdpath = NULL;
+	path = NULL;
 	if (is_builtin(ecmd->argv[0]))
 	{
-		if (run_builtin(ecmd) == -1) // finish heute noch 16.10.
-			return ;
+		if (run_builtin(ecmd)) // Adjust depending on what builtins output
+			exit(1);           // Adjust this all when we have builtins
 	}
 	if (ft_strncmp(ecmd->argv[0], "minishell", 9) == 0)
 	{
