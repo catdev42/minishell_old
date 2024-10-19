@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex_bonus.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: myakoven <myakoven@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: spitul <spitul@student.42berlin.de >       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/04 02:45:09 by myakoven          #+#    #+#             */
-/*   Updated: 2024/03/19 16:56:32 by myakoven         ###   ########.fr       */
+/*   Updated: 2024/10/19 19:04:55 by spitul           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ void	execute(char *cmd, char **env, char *cmdpath)
 	command = ft_split(cmd, ' ');
 	if (execve(path, command, env) == -1)
 	{
-		ft_freetab(command, 0);
+		ft_freetab(command);
 		error_handler_exit(cmd);
 	}
 }
@@ -103,14 +103,14 @@ char	*ft_findpath(char *cmd, char **env, char *cmdpath)
 		path = ft_jointhree(cmdpath, splitpaths[i++], "/", splitcommand[0]);
 		if (access(path, F_OK | X_OK) == 0)
 		{
-			ft_freetab(splitpaths, 0);
-			ft_freetab(splitcommand, 0);
+			ft_freetab(splitpaths);
+			ft_freetab(splitcommand);
 			return (path);
 		}
 		ft_bzero(cmdpath, 1024);
 	}
-	ft_freetab(splitpaths, 0);
-	ft_freetab(splitcommand, 0);
+	ft_freetab(splitpaths);
+	ft_freetab(splitcommand);
 	return (cmd);
 }
 
@@ -143,7 +143,7 @@ error_handler function
 char	*firstw;
 
 firstw = first_word(str, ' ');
-if (ft_strncmp(firstw, " ", 2) == 0)
+if	(ft_strncmp(firstw, " ", 2) == 0)
 free(firstw);
 
 
@@ -167,8 +167,8 @@ if (!pid)
 else
 {
 
-	// parent process asssigns the read end to std_in and 
-	// doesn't evaporate next function will automatically 
+	// parent process asssigns the read end to std_in and
+	// doesn't evaporate next function will automatically
 	// read from std in which is now the read end of the pipe
 
 	close(p_fd[1]);

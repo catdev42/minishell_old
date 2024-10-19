@@ -65,54 +65,44 @@ void	handle_node(t_cmd *cmd, t_tools *tool)
 	/*if we dont terminate all the stuff in exec node we exit error?*/
 }
 
-// check if order of running processes correct?
-void	run_pipe(t_pipecmd *pcmd, t_tools *tools)
+/* function forks and sets up and manages pipes*/
+
+void	pipe_cmd(t_pipecmd *pcmd, t_tools *tools)
 {
+	int		pipefd[2];
 	int		status1;
 	int		status2;
 	pid_t	pid1;
 	pid_t	pid2;
 
-	pid1 = pipe_fork(1, pcmd->left, 0, tools);
-	pid2 = pipe_fork(0, pcmd->right, 1, tools);
-	waitpid(pid1, &status1, 0);
+	if (pipe(pipefd) == -1)
+		exit(pipe_error(pcmd));
+	pid1 = fork();
+	if (pid1 == -1)
+		exit(fork_error());
+	if (pid1 == 0)
+	{
+		close(pipefd[0]);
+		dup2(pipefd[1], STDOUT_FILENO);
+		close(pipefd[1]);
+		handle_node(pcmd->left, tools); //terminating
+	}
+	close(pipefd[1]);
+	waitpid(pid1, &status1, 0); // check the sleep situation
 	check_system_fail(status1, tools);
+	pid2 = fork();
+	if (pid2 == -1)
+		exit(fork_error());
+	if (pid2 == 0)
+	{
+		close(pipefd[1]);
+		dup2(pipefd[0], STDIN_FILENO);
+		close(pipefd[0]);
+		handle_node(pcmd->right, tools); //terminating
+	}
+	close(pipefd[0]);
 	waitpid(pid2, &status2, 0);
 	check_system_fail(status2, tools);
-}
-
-/* function forks and sets up and manages pipes*/
-/* Myakoven: What are these variables? */
-/* pfd, fd = for stdin, stdout and reading or writing end of pipes*/
-pid_t	pipe_fork(int fd, t_cmd *cmd, int pfd, t_tools *tool)
-{
-	int	pipefd[2];
-	int	pid;
-
-	printf("here i am before fork with std %d\n", fd);
-	if (pipe(pipefd) == -1)
-		print_errno_exit("pipe", NULL, 141, tool);
-	pid = fork();
-	if (pid == -1)
-		print_errno_exit("fork", NULL, 141, tool);
-	if (pid == 0)
-	{
-		printf("child\n");
-		close(pipefd[pfd]);
-		dup2(pipefd[fd], fd);
-		printf("after dup2 with fd %d\n", fd);
-		close(pipefd[fd]);
-		handle_node(cmd, tool);
-	}
-	else
-	{
-		if (fd == 0)
-			close(pipefd[1]);
-		else if (fd == 1)
-			close(pipefd[1]);
-	}
-	// Waitpid?
-	return (pid);
 }
 
 // maybe open dir w/ opendir
