@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: spitul <spitul@student.42berlin.de >       +#+  +:+       +#+        */
+/*   By: myakoven <myakoven@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 20:12:04 by myakoven          #+#    #+#             */
-/*   Updated: 2024/10/19 22:07:59 by spitul           ###   ########.fr       */
+/*   Updated: 2024/10/20 17:24:42 by myakoven         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ char			*get_var(char **env, char *var);
 /************************/
 int				print_errno_exit(const char *arg, const char *errline,
 					int custom_fail, t_tools *tools);
-int				error_exit(t_tools *tools, int error);
+void			error_exit(t_tools *tools, int error);
 struct s_cmd	*clean_execs(struct s_cmd *first, struct s_cmd *second);
 void			clean_tools(t_tools *tools);
 int				print_error(const char *arg, const char *errline,
@@ -94,7 +94,7 @@ void			execute_execve(char *pathcmd, t_execcmd *ecmd, t_tools *tool);
 char			*check_cmd_path(char *path, t_execcmd *cmd, t_tools *tools);
 int				running_msh(t_tools *tools);
 /* execredir */
-int			run_redir(t_redircmd *rcmd, t_tools *tool);
+int				run_redir(t_redircmd *rcmd, t_tools *tool);
 pid_t			pipe_fork(int fd, t_cmd *cmd, int pfd, t_tools *tool);
 void			run_pipe(t_pipecmd *pcmd, t_tools *tools);
 

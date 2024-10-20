@@ -6,7 +6,7 @@
 /*   By: myakoven <myakoven@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/06 19:16:34 by myakoven          #+#    #+#             */
-/*   Updated: 2024/10/20 13:35:02 by myakoven         ###   ########.fr       */
+/*   Updated: 2024/10/20 17:29:54 by myakoven         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,18 +37,18 @@ struct s_cmd	*parse_redirs(char *start, char *end_of_exec, t_tools *tools)
 	ret = NULL;
 	while (*start && start < end_of_exec)
 	{
-		mode = 0;
+		mode = -1;
 		fd_in_or_out = -1;
 		if (isquote(*start))
 			start += skip_quotes(start, 0);
 		if (isredir(*start))
 		{
+			fd_in_or_out = infile_or_outfile(start);
 			if (start[0] == start[1] && start[0] == '<')
 			{
-				launch_heredoc(start, 0, tools);
+				createredir_heredoc(&start[2], mode, fd_in_or_out, tools);
 				start = start + skip_token(start, 0);
 			}
-			fd_in_or_out = infile_or_outfile(start);
 			if (start[1] == start[0])
 				start++;
 			createredir(++start, mode, fd_in_or_out, tools);
@@ -95,6 +95,8 @@ struct s_cmd	*parseargv(char *start, char *end, t_tools *tools)
 		error_exit(tools, 1);
 	while (start[i] && (&start[i] < end))
 	{
+		if (index == MAXARGS)
+			return (print_error(NULL, "Too many arguments", NULL));
 		while (start[i] && isspace(start[i]))
 			i++;
 		if (start[i] && istoken(start[i]))

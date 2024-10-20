@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: spitul <spitul@student.42berlin.de >       +#+  +:+       +#+        */
+/*   By: myakoven <myakoven@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 20:51:01 by myakoven          #+#    #+#             */
-/*   Updated: 2024/10/19 20:20:03 by spitul           ###   ########.fr       */
+/*   Updated: 2024/10/20 17:43:17 by myakoven         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,9 +22,10 @@ int	main(int argc, char **argv, char **env)
 	if (argc > 1 || argv[1])
 		ft_putstr_fd("This program does not accept arguments\n", 2);
 	ft_memset(&tools, 0, sizeof(t_tools)); // init tools to zero
+	here_init(tools.heredocs, &tools);
 	tools.env = copy_env(&tools, env);
-	if (!tools.env)
-		return (error_exit(&tools, 1));
+	if (!tools.env || !tools.heredocs[0][0])
+		(error_exit(&tools, 1));
 	// init_sa(&sa);
 	shell_loop(&tools);
 	print_tab(tools.env);

@@ -52,29 +52,47 @@ int	main(void)
 	char	*ok;
 	char	*ok2;
 	int		fd;
-	char	heredocs[20][20];
+	char	heredocs[MAXARGS][MAXARGS];
 
-	name_heredoc(ok) fd = open(ft_ltoa((long int)ok),
-			O_RDWR | O_CREAT | O_APPEND, 0644);
+	name_heredoc(ok);
+	fd = open(ft_ltoa((long int)ok), O_RDWR | O_CREAT | O_APPEND, 0644);
 	write(fd, "hello", 5);
 }
 
-name_heredoc(char *pointer, char heredocs[][])
+void	here_init(char heredocs[MAXARGS][MAXARGS]) // add tools
 {
-	int		i;
-	char	*tempstralloc;
+	int i;
+	char *tempalloc;
 
-	while (heredoc[i][0])
-		i++;
-	tempstralloc = ft_atol((long int)pointer);
-	ft_strlcpy(heredocs[i], )
-
-/*
-//  to delete a file
-	 if (unlink(filename) == 0) {
-        printf("File deleted successfully.\n");
-    } else {
-        perror("Error deleting file");
-    }
-*/
+	i = 0;
+	while (i < MAXARGS)
+	{
+		tempalloc = NULL;
+		tempalloc = ft_atoi(i);
+		if (!tempalloc)
+			exit(1); // add clean tools
+		ft_strlcpy(heredocs[i], "heredoc", MAXARGS);
+		ft_strlcat(heredocs[i], i, MAXARGS);
+		free(tempalloc);
+	}
+	return ;
 }
+
+// name_heredoc(char *pointer, char heredocs[][])
+// {
+// 	int		i;
+// 	char	*tempstralloc;
+
+// 	while (heredoc[i][0])
+// 		i++;
+// 	tempstralloc = ft_atol((long int)pointer);
+// 	ft_strlcpy(heredocs[i], )
+// 	/*
+// 	//  to delete a file
+// 			if (unlink(filename) == 0) {
+// 			printf("File deleted successfully.\n");
+// 		} else {
+// 			perror("Error deleting file");
+// 		}
+// 	*/
+// }

@@ -6,7 +6,7 @@
 /*   By: myakoven <myakoven@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/13 20:00:21 by myakoven          #+#    #+#             */
-/*   Updated: 2024/10/20 14:16:09 by myakoven         ###   ########.fr       */
+/*   Updated: 2024/10/20 17:41:58 by myakoven         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,6 +85,7 @@ typedef struct s_tools
 	char					*s;
 	char					*cmd_end;
 	char					heredocs[MAXARGS][MAXARGS];
+	int						hereindex;
 	// char					*p;
 	// char					*p_next;
 	// char					*r;

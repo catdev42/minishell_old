@@ -120,21 +120,22 @@ FOR EXITING!
 1: malloc
 3: just exit(1) nothing printed
 */
-int	error_exit(t_tools *tools, int error)
+void	error_exit(t_tools *tools, int error)
 {
 	clean_tools(tools);
 	clear_history();
 	if (error == 0) // sucessful exit
 		exit(0);
-	else if (error > 0)
+	else if (error == 1)
 	{
 		// usually malloc error.... this need to be edited and replaces with errno exits...
 		print_error(NULL, strerror(errno), NULL);
-		exit(error);
+		exit(errno);
 	}
 	else if (error > 1)
 		exit(error);
-	return (1);
+	else
+		exit(1);
 }
 
 void	clean_tools(t_tools *tools)
