@@ -6,7 +6,7 @@
 /*   By: spitul <spitul@student.42berlin.de >       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 20:12:04 by myakoven          #+#    #+#             */
-/*   Updated: 2024/10/19 22:07:59 by spitul           ###   ########.fr       */
+/*   Updated: 2024/10/20 15:51:24 by spitul           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,17 @@
 // volatile sig_atomic_t	global_signal = 0;
 
 void			walking(struct s_cmd *cmd);
+/************************/
+/******* BUILTINS.c ****/
+/************************/
+int				pwd(t_execcmd *cmd);
+int				ft_exit(void);
+int				env(void);
+int				unset(void);
+int				export(void);
+int				cd(void);
+int				echo(void);
+int				builtin_check_walk(t_cmd *cmd);
 
 /************************/
 /******* CLEAN.C ********/
@@ -83,7 +94,7 @@ int				print_error(const char *arg, const char *errline,
 void			check_system_fail(int status, t_tools *tools);
 void			change_shlvl(t_tools *tool);
 int				is_builtin(char *s);
-int				run_builtin(t_execcmd *cmd);
+int				run_builtin(t_execcmd *cmd, t_tools *tool);
 int				file_dir_noexist(const char *path, int fd_in_or_out);
 int				check_file_type(t_redircmd *rcmd, int fd_in_or_out);
 /* exec */
@@ -93,8 +104,9 @@ void			exec_new_minishell(t_tools *tool, t_execcmd *ecmd);
 void			execute_execve(char *pathcmd, t_execcmd *ecmd, t_tools *tool);
 char			*check_cmd_path(char *path, t_execcmd *cmd, t_tools *tools);
 int				running_msh(t_tools *tools);
+int				run_pipeless_builtin_tree(t_cmd *cmd, t_tools *tool);
 /* execredir */
-int			run_redir(t_redircmd *rcmd, t_tools *tool);
+int				run_redir(t_redircmd *rcmd, t_tools *tool);
 pid_t			pipe_fork(int fd, t_cmd *cmd, int pfd, t_tools *tool);
 void			run_pipe(t_pipecmd *pcmd, t_tools *tools);
 
@@ -178,20 +190,6 @@ int				get_matrix_len(char **matrix);
 int				check_quotes(char *line, int i);
 int				skip_quotes(char *line, int i);
 int				skip_token(char *start, int i);
-
-/************************/
-/******* built_ins.c ****/
-/************************/
-int				pwd(t_execcmd *cmd);
-int				ft_exit(void);
-int				env(void);
-int				unset(void);
-int				export(void);
-int				cd(void);
-int				echo(void);
-int				builtin_check_walk(t_cmd *cmd);
-// void	pwd(t_tools *tools, cmd_t *cmd); //TODO
-// void	pwd(t_tools *tools);
 
 // int		check_quotes(char *line, int i);
 // char	*get_redir_error(char *line, int i, int goodtokens);

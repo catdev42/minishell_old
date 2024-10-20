@@ -6,12 +6,11 @@
 /*   By: spitul <spitul@student.42berlin.de >       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 20:25:45 by spitul            #+#    #+#             */
-/*   Updated: 2024/10/19 20:35:00 by spitul           ###   ########.fr       */
+/*   Updated: 2024/10/20 15:03:08 by spitul           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "./include/minishell.h"
-
 
 /*checks if here is a non builtin command in a pipefree tree*/
 int	builtin_check_walk(t_cmd *cmd)
@@ -41,7 +40,6 @@ int	builtin_check_walk(t_cmd *cmd)
 	return (res);
 }
 
-
 int	is_builtin(char *s)
 {
 	int	a;
@@ -64,10 +62,11 @@ int	is_builtin(char *s)
 	return (a);
 }
 
-int	run_builtin(t_execcmd *cmd)
+int	run_builtin(t_execcmd *cmd, t_tools *tool)
 {
 	int	a;
 
+	tool->isfork = 1;
 	a = 0;
 	if (ft_strncmp(cmd->argv[0], ECHO, 5) == 0)
 		a = echo();

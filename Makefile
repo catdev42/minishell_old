@@ -10,7 +10,7 @@ LIBFT = ./libft/libft.a
 
 HEADERS 	:= ./include
 OBJDIR		:= ./obj
-SRC     	:= builtins.c builtins_utils.c clean.c env.c error.c exec_utils.c  exec_cmd.c \
+SRC     	:= builtins.c builtins_utils.c clean.c env.c error.c exec_utils.c  exec_node_handling.c \
 				exec.c init.c line.c linesyntax.c lineutils.c main.c \
 					parse.c parseredirs.c parseutils.c utils.c utils2.c utils3.c walking.c \
 						shellinshell.c
