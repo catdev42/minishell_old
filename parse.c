@@ -6,15 +6,15 @@
 /*   By: myakoven <myakoven@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 00:42:37 by myakoven          #+#    #+#             */
-/*   Updated: 2024/10/14 19:22:35 by myakoven         ###   ########.fr       */
+/*   Updated: 2024/10/20 16:00:02 by myakoven         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "./include/minishell.h"
 
 static void		nullify(char *cline, t_tools *tools);
-static void	remove_useless_quotes_final(char *cline, size_t linecapacity);
-		// FIX THIS TO BE MORE PRECISE MAYBE?
+static void		remove_useless_quotes_final(char *cline, size_t linecapacity);
+// FIX THIS TO BE MORE PRECISE MAYBE?
 
 struct s_cmd	*parseline(char *cline, t_tools *tools)
 {
