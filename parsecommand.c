@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parseredirs.c                                      :+:      :+:    :+:   */
+/*   parsecommand.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: myakoven <myakoven@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/06 19:16:34 by myakoven          #+#    #+#             */
-/*   Updated: 2024/10/18 22:26:40 by myakoven         ###   ########.fr       */
+/*   Updated: 2024/10/20 13:35:02 by myakoven         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,12 @@ struct s_cmd	*parse_redirs(char *start, char *end_of_exec, t_tools *tools)
 			start += skip_quotes(start, 0);
 		if (isredir(*start))
 		{
+			if (start[0] == start[1] && start[0] == '<')
+			{
+				launch_heredoc(start, 0, tools);
+				start = start + skip_token(start, 0);
+			}
 			fd_in_or_out = infile_or_outfile(start);
-			
 			if (start[1] == start[0])
 				start++;
 			createredir(++start, mode, fd_in_or_out, tools);
