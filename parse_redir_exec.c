@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parsecommand.c                                     :+:      :+:    :+:   */
+/*   parse_redir_exec.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: myakoven <myakoven@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/06 19:16:34 by myakoven          #+#    #+#             */
-/*   Updated: 2024/10/20 17:29:54 by myakoven         ###   ########.fr       */
+/*   Updated: 2024/10/20 19:25:37 by myakoven         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,12 +46,15 @@ struct s_cmd	*parse_redirs(char *start, char *end_of_exec, t_tools *tools)
 			fd_in_or_out = infile_or_outfile(start);
 			if (start[0] == start[1] && start[0] == '<')
 			{
-				createredir_heredoc(&start[2], mode, fd_in_or_out, tools);
+				createredir_here(&start[2], mode, fd_in_or_out, tools);
 				start = start + skip_token(start, 0);
 			}
-			if (start[1] == start[0])
-				start++;
-			createredir(++start, mode, fd_in_or_out, tools);
+			else
+			{
+				if (start[1] == start[0])
+					start++;
+				createredir(++start, mode, fd_in_or_out, tools);
+			}
 			if (!ret)
 				ret = (struct s_cmd *)tools->lastredir;
 		}
@@ -77,7 +80,7 @@ struct s_cmd	*createredir(char *filestart, int mode, int fd, t_tools *tools)
 		tools->lastredir = (struct s_redircmd *)makeredir(filestart, end, mode,
 				fd);
 	if (!tools->lastredir)
-		error_exit(tools, 1);
+		error_exit(tools, UNKNOWNERROR);
 	return ((struct s_cmd *)tools->lastredir);
 }
 
@@ -96,7 +99,10 @@ struct s_cmd	*parseargv(char *start, char *end, t_tools *tools)
 	while (start[i] && (&start[i] < end))
 	{
 		if (index == MAXARGS)
-			return (print_error(NULL, "Too many arguments", NULL));
+		{
+			print_error("argv", "too many arguments", NULL);
+			return (NULL);
+		}
 		while (start[i] && isspace(start[i]))
 			i++;
 		if (start[i] && istoken(start[i]))

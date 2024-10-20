@@ -12,7 +12,7 @@ HEADERS 	:= ./include
 OBJDIR		:= ./obj
 SRC     	:= builtins.c builtins_utils.c clean.c env.c error.c exec_utils.c  exec_cmd.c \
 				exec.c init.c line.c linesyntax.c lineutils.c main.c \
-					parse.c parsecommand.c parseutils.c utils.c utils2.c utils3.c walking.c \
+					parse_heredoc.c parse_redir_exec.c parse_utils.c parse.c utils.c utils2.c utils3.c walking.c \
 						shellinshell.c
 # exec_utils2.c  execredir.c
 OBJS     	:= $(addprefix $(OBJDIR)/,$(SRC:.c=.o))

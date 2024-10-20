@@ -6,7 +6,7 @@
 /*   By: myakoven <myakoven@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 20:12:04 by myakoven          #+#    #+#             */
-/*   Updated: 2024/10/20 17:24:42 by myakoven         ###   ########.fr       */
+/*   Updated: 2024/10/20 19:25:11 by myakoven         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,7 @@
 		int error)*/
 # define SYSTEMFAIL 142
 # define FORKFAIL 141
+# define UNKNOWNERROR 143
 
 // volatile sig_atomic_t	global_signal = 0;
 
@@ -95,8 +96,9 @@ char			*check_cmd_path(char *path, t_execcmd *cmd, t_tools *tools);
 int				running_msh(t_tools *tools);
 /* execredir */
 int				run_redir(t_redircmd *rcmd, t_tools *tool);
-pid_t			pipe_fork(int fd, t_cmd *cmd, int pfd, t_tools *tool);
 void			run_pipe(t_pipecmd *pcmd, t_tools *tools);
+// pid_t			pipe_fork(int fd, t_cmd *cmd, int pfd, t_tools *tool);
+// void			run_pipe(t_pipecmd *pcmd, t_tools *tools);
 
 /************************/
 /******* INIT.C ********/
@@ -140,14 +142,18 @@ struct s_cmd	*createpipe(struct s_cmd *left, struct s_cmd *right,
 					t_tools *tools);
 char			*peek(char *line, char *end, int token);
 /*static nullify*/
+/******parse_heredoc.c*****/
+void			here_init(char heredocs[MAXARGS][MAXARGS], t_tools *tools);
+struct s_cmd	*createredir_here(char *delim, int mode, int fd, t_tools *tools);
+char			*make_heredoc_file(char *delim, t_tools *tools);
 
-/***** parseredirs.c ****/
+/***** parse_redir_exec.c ****/
 struct s_cmd	*parseexec(char *start, char *end_of_exec, t_tools *tools);
 struct s_cmd	*parse_redirs(char *start, char *end_of_exec, t_tools *tools);
 struct s_cmd	*createredir(char *filestart, int mode, int fd, t_tools *tools);
 struct s_cmd	*parseargv(char *start, char *end, t_tools *tools);
 
-/***** parseutils.c *****/
+/***** parse_utils.c *****/
 
 int				infile_or_outfile(char *start);
 char			*get_redir_path(char *redir, t_tools *tools);

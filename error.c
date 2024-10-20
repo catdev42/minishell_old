@@ -126,14 +126,18 @@ void	error_exit(t_tools *tools, int error)
 	clear_history();
 	if (error == 0) // sucessful exit
 		exit(0);
+	else if (error >= 141 && error <= 143)
+	{
+		exit(error);
+	}
 	else if (error == 1)
+		exit(errno);
+	else if (error > 0)
 	{
 		// usually malloc error.... this need to be edited and replaces with errno exits...
 		print_error(NULL, strerror(errno), NULL);
 		exit(errno);
 	}
-	else if (error > 1)
-		exit(error);
 	else
 		exit(1);
 }
@@ -143,6 +147,7 @@ void	clean_tools(t_tools *tools)
 	reset_tools(tools);
 	if (tools->env)
 		ft_freetab(tools->env);
+	// ft_memset(tools->heredocs, 0, sizeof(tools->heredocs)); //its not allocated... 
 }
 
 struct s_cmd	*clean_execs(struct s_cmd *first, struct s_cmd *second)

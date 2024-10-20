@@ -1,3 +1,10 @@
+DELETE HEREDOC FILES
+
+
+
+
+
+
 Can i just parse everything in a fork and then pass the tree through a pipe?
 This would just make my life so much easier...
 
