@@ -17,23 +17,22 @@ executes without forking
 TODO - running minishell inside minishell*/
 int	running_msh(t_tools *tools)
 {
-	// pid_t	pid;
-	// int		status;
-	// status = 0;
+	pid_t	pid;
+	int		status;
+	status = 0;
 	if (!tools->tree)
 		return (0);
 	if ((tools->tree->type == PIPE) || (tools->tree->type != PIPE
 			&& (builtin_check_walk(tools->tree) == 0)))
 	{
 		tools->isfork = 1;
-		// pid = fork();
-		// if (pid == -1)
-		// 	print_errno_exit(NULL, NULL, 0, tools); // myakoven system fail
-		// if (pid == 0)
-		// 	exec_cmd(tools->tree, tools);
-		handle_node(tools->tree, tools);
-		// waitpid(pid, &status, 0);
-		// check_system_fail(status, tools); // maykoven this also exits
+		pid = fork();
+		if (pid == -1)
+			print_errno_exit(NULL, NULL, 0, tools); // myakoven system fail
+		if (pid == 0)
+			handle_node(tools->tree, tools);
+		waitpid(pid, &status, 0);
+		check_system_fail(status, tools); // maykoven this also exits
 	}
 	else
 		handle_node(tools->tree, tools);
