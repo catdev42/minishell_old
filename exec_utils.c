@@ -6,7 +6,7 @@
 /*   By: myakoven <myakoven@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 10:01:36 by spitul            #+#    #+#             */
-/*   Updated: 2024/10/21 18:10:13 by myakoven         ###   ########.fr       */
+/*   Updated: 2024/10/21 18:34:20 by myakoven         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,9 +75,9 @@ int	file_dir_noexist(const char *path, int fd_in_or_out)
 	else
 		print_error(path, "Is neither a file nor a directory", NULL);
 	return (0); //error
-pOl0Hv}
+}
 
-pOl0Hv/* Return the MODE necessary for OPEN() file or dir */
+/* Return the MODE necessary for OPEN() file or dir */
 
 int	check_file_type(t_redircmd *rcmd, int fd_in_or_out)//took the tools out cause not used
 {

@@ -6,7 +6,7 @@
 /*   By: myakoven <myakoven@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/06 19:16:34 by myakoven          #+#    #+#             */
-/*   Updated: 2024/10/21 18:17:41 by myakoven         ###   ########.fr       */
+/*   Updated: 2024/10/21 18:36:40 by myakoven         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,8 +48,7 @@ struct s_cmd	*parse_redirs(char *start, char *end_of_exec, t_tools *tools)
 			fd_in_or_out = infile_or_outfile(start);
 			if (start[0] == start[1] && start[0] == '<')
 			{
-				createredir_here(&start[2], mode, 0, tools);
-				// start = start + skip_token(start, 0);
+				start += createredir_here(&start[2], mode, 0, tools);
 			}
 			else
 			{
