@@ -6,7 +6,7 @@
 /*   By: myakoven <myakoven@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 20:51:01 by myakoven          #+#    #+#             */
-/*   Updated: 2024/10/21 16:44:10 by myakoven         ###   ########.fr       */
+/*   Updated: 2024/10/21 19:10:35 by myakoven         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,9 +39,7 @@ int	shell_loop(t_tools *tools)
 	{
 		// if (global_signal == SIGTERM) // TODO? or done
 		// 	break ;
-		reset_tools(tools);
 		tools->line = readline("minishell: ");
-		checkexit(tools); // We have to make our own exit builtin?
 		global_signal = 0;
 		if (!valid_line(tools->line))
 			continue ;
@@ -63,6 +61,7 @@ int	shell_loop(t_tools *tools)
 		// TODO? or done
 		// 	break ;
 		running_msh(tools);
+		reset_tools(tools);
 	}
 	clean_tools(tools);
 	return (0);
@@ -70,12 +69,19 @@ int	shell_loop(t_tools *tools)
 
 // CHECK IF THIS SHOULD BE A BUILTIN??? TODO TO DO
 /* Liretally checks if exit was typed into the line as the first command */
-void	checkexit(t_tools *tools)
-{
-	if (!tools->line || (!strncmp(tools->line, "exit", 4)
-			&& (ft_isspace(tools->line[5]) || tools->line[5] == 0)))
-		error_exit(tools, 0);
-}
+
+/* OBSOLETE */
+// void	checkexit(t_tools *tools)
+// {
+// 	if (!tools->line || (!strncmp(tools->line, "exit", 4)
+// 			&& (ft_isspace(tools->line[5]) || tools->line[5] == 0)))
+// 	{
+// 		if (ft_strlen(tools->line) > 5)
+// 			print_error("exit", "this command does not accept arguments", NULL);
+// 			else
+// 			error_exit(tools, 0);
+// 	}
+// }
 
 void	new_line(void)
 {
