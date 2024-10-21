@@ -6,7 +6,7 @@
 /*   By: myakoven <myakoven@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/06 19:16:34 by myakoven          #+#    #+#             */
-/*   Updated: 2024/10/21 16:38:26 by myakoven         ###   ########.fr       */
+/*   Updated: 2024/10/21 18:20:36 by myakoven         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,13 +61,15 @@ void	here_unlink(t_tools *tools)
 // tools->lastredir;
 // launchreadlineloop
 // write what it sees into a file and turn it into a regular infile
-struct s_cmd	*createredir_here(char *delim, int mode, int fd, t_tools *tools)
+int	createredir_here(char *delim, int mode, int fd, t_tools *tools)
 {
 	char	*end;
 	char	*filename;
+	int		len;
 
 	end = get_token_end(delim);
 	filename = make_heredoc_file(delim, tools);
+	len = end - delim;
 	if (tools->lastredir)
 	{
 		tools->lastredir->cmd = makeredir(filename, end, mode, fd);
@@ -78,7 +80,7 @@ struct s_cmd	*createredir_here(char *delim, int mode, int fd, t_tools *tools)
 				fd);
 	if (!tools->lastredir)
 		error_exit(tools, 1);
-	return ((struct s_cmd *)tools->lastredir);
+	return (len);
 }
 
 /*Gives user the cursor - must check*/
