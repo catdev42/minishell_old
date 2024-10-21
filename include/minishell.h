@@ -6,7 +6,7 @@
 /*   By: myakoven <myakoven@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 20:12:04 by myakoven          #+#    #+#             */
-/*   Updated: 2024/10/21 20:50:09 by myakoven         ###   ########.fr       */
+/*   Updated: 2024/10/21 21:22:46 by myakoven         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,12 +55,12 @@ void			walking(struct s_cmd *cmd);
 /******* BUILTINS.c ****/
 /************************/
 int				pwd(t_execcmd *cmd);
-int				ft_exit(void);
-int				env(void);
-int				unset(void);
-int				export(void);
-int				cd(void);
-int				echo(void);
+int				ft_exit(t_execcmd *cmd, t_tools *tool);
+// int				env(t_execcmd *cmd, t_tools *tool);
+int				unset(t_execcmd *cmd, t_tools *tool);
+// int				export(t_execcmd *cmd, t_tools *tool);
+// int				cd(t_execcmd *cmd, t_tools *tool);
+int				echo(t_execcmd *cmd);
 int				builtin_check_walk(t_cmd *cmd);
 
 /************************/
@@ -157,8 +157,7 @@ char			*peek(char *line, char *end, int token);
 /******parse_heredoc.c*****/
 void			here_unlink(t_tools *tools);
 void			here_init(char heredocs[MAXARGS][MAXARGS], t_tools *tools);
-int				createredir_here(char *delim, int mode, int fd,
-					t_tools *tools);
+int				createredir_here(char *delim, int mode, int fd, t_tools *tools);
 char			*make_heredoc_file(char *delim, t_tools *tools);
 
 /***** parse_redir_exec.c ****/

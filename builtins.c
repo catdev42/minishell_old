@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtins.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: spitul <spitul@student.42berlin.de>        +#+  +:+       +#+        */
+/*   By: myakoven <myakoven@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/14 14:13:16 by spitul            #+#    #+#             */
-/*   Updated: 2024/10/21 19:01:15 by spitul           ###   ########.fr       */
+/*   Updated: 2024/10/21 21:23:27 by myakoven         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,15 +36,15 @@ int	echo(t_execcmd *cmd)
 	return (0);
 }
 
-int	cd(void)
-{
-	return (1);
-}
+// int	cd(t_execcmd *cmd, t_tools *tool)
+// {
+// 	return (1);
+// }
 
-int	export(void)
-{
-	return (1);
-}
+// int	export(t_execcmd *cmd, t_tools *tool)
+// {
+// 	return (1);
+// }
 
 int	unset(t_execcmd *cmd, t_tools *tool)
 {
@@ -72,16 +72,16 @@ int	unset(t_execcmd *cmd, t_tools *tool)
 	return (0);
 }
 
-int	env(void)
-{
-	return (1);
-}
+// int	env(t_execcmd *cmd, t_tools *tool)
+// {
+// 	return (1);
+// }
 
 int	ft_exit(t_execcmd *cmd, t_tools *tool)
 { 
 	if (get_matrix_len(cmd->argv) > 1)
 		print_error(NULL, "too many arguments", NULL); //maybe a little nonsensical
-	tree_free(tool->tree);
+	// tree_free(tool->tree);
 	clean_tools(tool);
 	exit (0);
 }
