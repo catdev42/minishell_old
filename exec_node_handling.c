@@ -1,16 +1,64 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   execcmd.c                                          :+:      :+:    :+:   */
+/*   exec_cmd.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: myakoven <myakoven@student.42berlin.de>    +#+  +:+       +#+        */
+/*   By: spitul <spitul@student.42berlin.de >       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 23:23:17 by myakoven          #+#    #+#             */
-/*   Updated: 2024/10/18 23:23:19 by myakoven         ###   ########.fr       */
+/*   Updated: 2024/10/20 15:47:32 by spitul           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "./include/minishell.h"
+
+void	run_exec_node(t_tools *tool, t_execcmd *ecmd)
+{
+	char	*path;
+	char	*cmdpath;
+	char	**split_path;
+	int		i;
+
+	i = 0;
+	cmdpath = NULL;
+	path = NULL;
+	if (is_builtin(ecmd->argv[0]))
+	{
+		if (run_builtin(ecmd, tool))
+			exit(1);
+	}
+	if (ft_strncmp(ecmd->argv[0], "minishell", 9) == 0)
+	{
+		exec_new_minishell(tool, ecmd);
+		return ;
+	}
+	if (access(ecmd->argv[0], F_OK) == 0)
+	{
+		if (access(ecmd->argv[0], X_OK) != 0)
+			print_errno_exit(NULL, NULL, 0, tool);
+		execute_execve(ecmd->argv[0], ecmd, tool);
+	}
+	path = get_var(tool->env, "PATH");
+	if (!path)
+		print_errno_exit(NULL, "PATH variable not found", SYSTEMFAIL, tool);
+	// path is a variable in ENV we do NOT free it
+	split_path = ft_split(path, ':');
+	if (!split_path)
+		print_errno_exit(NULL, NULL, 0, tool);
+	while (split_path[i])
+	{
+		cmdpath = check_cmd_path(split_path[i], ecmd, tool);
+		if (cmdpath != NULL)
+		{
+			ft_freetab(split_path);
+			execute_execve(cmdpath, ecmd, tool);
+			break ;
+		}
+		i++;
+	}
+	free(cmdpath);
+	print_errno_exit(ecmd->argv[0], "command not found", FORKFAIL, tool); //$?
+}
 
 char	*check_cmd_path(char *path, t_execcmd *cmd, t_tools *tools)
 {
