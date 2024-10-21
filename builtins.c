@@ -3,18 +3,37 @@
 /*                                                        :::      ::::::::   */
 /*   builtins.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: spitul <spitul@student.42berlin.de >       +#+  +:+       +#+        */
+/*   By: spitul <spitul@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/14 14:13:16 by spitul            #+#    #+#             */
-/*   Updated: 2024/10/18 19:45:09 by spitul           ###   ########.fr       */
+/*   Updated: 2024/10/21 19:01:15 by spitul           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "./include/minishell.h"
 
-int	echo(void)
+int	echo(t_execcmd *cmd)
 {
-	return (1);
+	int	i;
+	int	cmp;
+	
+	if (!cmd)
+		return (1);
+	cmp = ft_strncmp(cmd->argv[1], "-n", 3);
+	if (cmp == 0)
+		i = 2;
+	else
+		i = 1;
+	while (cmd->argv[i])
+	{
+		ft_putstr_fd(cmd->argv[i], 1); 
+		if (cmd->argv[i + 1])
+			ft_putstr_fd(" ", 1);
+		i ++;
+	}
+	if (cmp != 0)
+		ft_putstr_fd("\n", 1);
+	return (0);
 }
 
 int	cd(void)
@@ -27,9 +46,30 @@ int	export(void)
 	return (1);
 }
 
-int	unset(void)
+int	unset(t_execcmd *cmd, t_tools *tool)
 {
-	return (1);
+	int	i;
+	int j;
+	char	*temp;
+
+	i = 1;
+	if (!cmd)
+		return (1);
+	while (cmd->argv[i])
+	{
+		if (get_var(tool->env, cmd->argv[i]))
+		{
+			temp = cmd->argv[i];
+			j = i;
+			while (cmd->argv[j ++])
+			{
+				cmd->argv[j] = cmd->argv[j + 1];
+			}
+			free (temp);
+		}
+		i ++;
+	}
+	return (0);
 }
 
 int	env(void)
@@ -37,9 +77,13 @@ int	env(void)
 	return (1);
 }
 
-int	ft_exit(void)
-{
-	return (1);
+int	ft_exit(t_execcmd *cmd, t_tools *tool)
+{ 
+	if (get_matrix_len(cmd->argv) > 1)
+		print_error(NULL, "too many arguments", NULL); //maybe a little nonsensical
+	tree_free(tool->tree);
+	clean_tools(tool);
+	exit (0);
 }
 
 int	pwd(t_execcmd *cmd)
@@ -57,6 +101,7 @@ int	pwd(t_execcmd *cmd)
 		ft_putstr_fd(cwd, 1);
 		ft_putstr_fd("\n", 1);
 		free(cwd);
+		return (0);
 	}
 	else
 		perror("pwd: error retrieving current directory:");

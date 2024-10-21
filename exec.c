@@ -20,11 +20,23 @@ int	running_msh(t_tools *tools)
 	pid_t	pid;
 	int		status;
 	status = 0;
+	pid_t	pid;
+	int		status;
+
+	status = 0;
 	if (!tools->tree)
 		return (0);
 	if ((tools->tree->type == PIPE) || (tools->tree->type != PIPE
 			&& (builtin_check_walk(tools->tree) == 0)))
 	{
+		// tools->isfork = 1;
+		pid = fork();
+		if (pid == -1)
+			print_errno_exit(NULL, NULL, 0, tools); // myakoven system fail
+		if (pid == 0)
+			handle_node(tools->tree, tools);
+		waitpid(pid, &status, 0);
+		check_system_fail(status, tools); // maykoven this also exits
 		tools->isfork = 1;
 		pid = fork();
 		if (pid == -1)
@@ -35,7 +47,9 @@ int	running_msh(t_tools *tools)
 		check_system_fail(status, tools); // maykoven this also exits
 	}
 	else
-		handle_node(tools->tree, tools);
+	{
+		run_pipeless_builtin_tree(tools->tree, tools);
+	}
 	return (1);
 }
 
@@ -88,8 +102,8 @@ void	run_pipe(t_pipecmd *pcmd, t_tools *tools)
 		handle_node(pcmd->left, tools); // terminating
 	}
 	close(pipefd[1]);
-	waitpid(pid1, &status1, 0); // check the sleep situation
-	check_system_fail(status1, tools);
+		// if parent keeps the writing end open the pipe 
+		// will not be considered closed by the reading process
 	pid2 = fork();
 	if (pid2 == -1)
 		print_errno_exit(NULL, NULL, 0, tools);
@@ -101,6 +115,8 @@ void	run_pipe(t_pipecmd *pcmd, t_tools *tools)
 		handle_node(pcmd->right, tools); // terminating
 	}
 	close(pipefd[0]);
+	waitpid(pid1, &status1, 0);
+	check_system_fail(status1, tools);
 	waitpid(pid2, &status2, 0);
 	check_system_fail(status2, tools);
 }
@@ -117,7 +133,9 @@ int	run_redir(t_redircmd *rcmd, t_tools *tool)
 	else if (rcmd->mode == -1)
 		return (0);
 	close(rcmd->fd); // close(0)
+	close(rcmd->fd); // close(0)
 	rcmd->fd = open(rcmd->file, rcmd->mode, 0644);
+	// opening at fd 0 if zero was closed
 	// opening at fd 0 if zero was closed
 	if (rcmd->fd == -1)
 	{
@@ -127,52 +145,29 @@ int	run_redir(t_redircmd *rcmd, t_tools *tool)
 	return (1); //(success)
 }
 
-void	run_exec_node(t_tools *tool, t_execcmd *ecmd)
+int	run_pipeless_builtin_tree(t_cmd *cmd, t_tools *tool)
 {
-	char	*path;
-	char	*cmdpath;
-	char	**split_path;
-	int		i;
+	t_execcmd	*ecmd;
+	t_redircmd	*rcmd;
 
-	i = 0;
-	cmdpath = NULL;
-	path = NULL;
-	if (is_builtin(ecmd->argv[0]))
+	if (cmd->type == REDIR)
 	{
-		if (run_builtin(ecmd)) // Adjust depending on what builtins output
-			exit(1);           // Adjust this all when we have builtins
+		rcmd = (t_redircmd *)cmd;
+		rcmd->mode = check_file_type(rcmd, rcmd->fd);
+		if (rcmd->mode == -1)
+			return (0);
+		close(rcmd->fd);
+		rcmd->fd = open(rcmd->file, rcmd->mode, 0644);
+		if (rcmd->fd == -1)
+			return (0); // $?
+		run_pipeless_builtin_tree(rcmd->cmd, tool);
 	}
-	if (ft_strncmp(ecmd->argv[0], "minishell", 9) == 0)
+	if (cmd->type == EXEC)
 	{
-		exec_new_minishell(tool, ecmd);
-		return ;
+		ecmd = (t_execcmd *)cmd;
+		return (run_builtin(ecmd, tool));
 	}
-	if (access(ecmd->argv[0], F_OK) == 0)
-	{
-		if (access(ecmd->argv[0], X_OK) != 0)
-			print_errno_exit(NULL, NULL, 0, tool);
-		execute_execve(ecmd->argv[0], ecmd, tool);
-	}
-	path = get_var(tool->env, "PATH");
-	if (!path)
-		print_errno_exit(NULL, "PATH variable not found", SYSTEMFAIL, tool);
-	// path is a variable in ENV we do NOT free it
-	split_path = ft_split(path, ':');
-	if (!split_path)
-		print_errno_exit(NULL, NULL, 0, tool);
-	while (split_path[i])
-	{
-		cmdpath = check_cmd_path(split_path[i], ecmd, tool);
-		if (cmdpath != NULL)
-		{
-			ft_freetab(split_path);
-			execute_execve(cmdpath, ecmd, tool);
-			break ;
-		}
-		i++;
-	}
-	free(cmdpath);
-	print_errno_exit(ecmd->argv[0], "command not found", FORKFAIL, tool); //$?
+	return (0);
 }
 
 //**********************************************************************
@@ -181,20 +176,3 @@ void	run_exec_node(t_tools *tool, t_execcmd *ecmd)
 // unexpectedly before the writing process finishes. In this case,
 // the writing command (the one trying to send data to the pipe)
 //  will receive a SIGPIPE signal and often terminate.
-
-/*void	_exec_cmd(char *cmdpath, t_execcmd *cmd, char **env)
-{
-	pid_t	pid;
-
-	pid = fork();
-	if (pid == -1)
-		return (FORK_ERROR);//dunno
-	if (pid == 0)
-	{
-		if (execve(cmdpath, cmd->argv, env) == -1)
-		// better an error handling function
-			printf("msh: %s: no such file or directory\n", cmd->argv[0]);
-	}
-	else
-		waitpid(pid, NULL, 0);
-}*/
