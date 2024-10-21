@@ -6,7 +6,7 @@
 /*   By: spitul <spitul@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/14 14:13:16 by spitul            #+#    #+#             */
-/*   Updated: 2024/10/21 08:14:20 by spitul           ###   ########.fr       */
+/*   Updated: 2024/10/21 08:17:57 by spitul           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,11 +45,6 @@ int	export(void)
 {
 	return (1);
 }
-
-// sabina@sabina-pc:~/msh$ DISPLAY unset
-// DISPLAY: command not found
-// sabina@sabina-pc:~/msh$ echo $?
-// 127
 
 int	unset(t_execcmd *cmd, t_tools *tool)
 {
