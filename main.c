@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: spitul <spitul@student.42berlin.de >       +#+  +:+       +#+        */
+/*   By: myakoven <myakoven@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 20:51:01 by myakoven          #+#    #+#             */
-/*   Updated: 2024/10/19 20:20:03 by spitul           ###   ########.fr       */
+/*   Updated: 2024/10/21 20:44:11 by myakoven         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,9 +22,10 @@ int	main(int argc, char **argv, char **env)
 	if (argc > 1 || argv[1])
 		ft_putstr_fd("This program does not accept arguments\n", 2);
 	ft_memset(&tools, 0, sizeof(t_tools)); // init tools to zero
+	here_init(tools.heredocs, &tools);
 	tools.env = copy_env(&tools, env);
-	if (!tools.env)
-		return (error_exit(&tools, 1));
+	if (!tools.env || !tools.heredocs[0][0])
+		(error_exit(&tools, 1));
 	// init_sa(&sa);
 	shell_loop(&tools);
 	print_tab(tools.env);
@@ -38,9 +39,7 @@ int	shell_loop(t_tools *tools)
 	{
 		// if (global_signal == SIGTERM) // TODO? or done
 		// 	break ;
-		reset_tools(tools);
 		tools->line = readline("minishell: ");
-		checkexit(tools); // We have to make our own exit builtin?
 		global_signal = 0;
 		if (!valid_line(tools->line))
 			continue ;
@@ -56,12 +55,13 @@ int	shell_loop(t_tools *tools)
 		// ft_putstr_fd("\n", 1);
 		if (!parseline(tools->cleanline, tools))
 			continue ;
-		walking(tools->tree);
+		//walking(tools->tree);
 		// execution(tools->tree, tools);
 		// if (global_signal == SIGTERM)
 		// TODO? or done
 		// 	break ;
 		running_msh(tools);
+		reset_tools(tools);
 	}
 	clean_tools(tools);
 	return (0);
@@ -69,12 +69,19 @@ int	shell_loop(t_tools *tools)
 
 // CHECK IF THIS SHOULD BE A BUILTIN??? TODO TO DO
 /* Liretally checks if exit was typed into the line as the first command */
-void	checkexit(t_tools *tools)
-{
-	if (!tools->line || (!strncmp(tools->line, "exit", 4)
-			&& (ft_isspace(tools->line[5]) || tools->line[5] == 0)))
-		error_exit(tools, 0);
-}
+
+/* OBSOLETE */
+// void	checkexit(t_tools *tools)
+// {
+// 	if (!tools->line || (!strncmp(tools->line, "exit", 4)
+// 			&& (ft_isspace(tools->line[5]) || tools->line[5] == 0)))
+// 	{
+// 		if (ft_strlen(tools->line) > 5)
+// 			print_error("exit", "this command does not accept arguments", NULL);
+// 			else
+// 			error_exit(tools, 0);
+// 	}
+// }
 
 void	new_line(void)
 {

@@ -6,7 +6,7 @@
 /*   By: myakoven <myakoven@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 19:22:37 by myakoven          #+#    #+#             */
-/*   Updated: 2024/10/10 22:05:27 by myakoven         ###   ########.fr       */
+/*   Updated: 2024/10/21 18:49:49 by myakoven         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,9 @@ void	reset_tools(t_tools *tools)
 	// tools->p = NULL;
 	// tools->p_next = NULL;
 	tools->e_cline = NULL;
+	tools->hereindex = 0;
+	//TODO CLEAN HEREDOC FILES
+	here_unlink(tools);
 }
 
 static void	handle_exec(struct s_execcmd *cmd)

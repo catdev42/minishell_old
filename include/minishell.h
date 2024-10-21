@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: spitul <spitul@student.42berlin.de >       +#+  +:+       +#+        */
+/*   By: myakoven <myakoven@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 20:12:04 by myakoven          #+#    #+#             */
-/*   Updated: 2024/10/19 22:07:59 by spitul           ###   ########.fr       */
+/*   Updated: 2024/10/21 20:50:09 by myakoven         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,10 +46,22 @@
 		int error)*/
 # define SYSTEMFAIL 142
 # define FORKFAIL 141
+# define UNKNOWNERROR 143
 
 // volatile sig_atomic_t	global_signal = 0;
 
 void			walking(struct s_cmd *cmd);
+/************************/
+/******* BUILTINS.c ****/
+/************************/
+int				pwd(t_execcmd *cmd);
+int				ft_exit(void);
+int				env(void);
+int				unset(void);
+int				export(void);
+int				cd(void);
+int				echo(void);
+int				builtin_check_walk(t_cmd *cmd);
 
 /************************/
 /******* CLEAN.C ********/
@@ -69,7 +81,7 @@ char			*get_var(char **env, char *var);
 /************************/
 int				print_errno_exit(const char *arg, const char *errline,
 					int custom_fail, t_tools *tools);
-int				error_exit(t_tools *tools, int error);
+void			error_exit(t_tools *tools, int error);
 struct s_cmd	*clean_execs(struct s_cmd *first, struct s_cmd *second);
 void			clean_tools(t_tools *tools);
 int				print_error(const char *arg, const char *errline,
@@ -83,7 +95,7 @@ int				print_error(const char *arg, const char *errline,
 void			check_system_fail(int status, t_tools *tools);
 void			change_shlvl(t_tools *tool);
 int				is_builtin(char *s);
-int				run_builtin(t_execcmd *cmd);
+int				run_builtin(t_execcmd *cmd, t_tools *tool);
 int				file_dir_noexist(const char *path, int fd_in_or_out);
 int				check_file_type(t_redircmd *rcmd, int fd_in_or_out);
 /* exec */
@@ -93,10 +105,12 @@ void			exec_new_minishell(t_tools *tool, t_execcmd *ecmd);
 void			execute_execve(char *pathcmd, t_execcmd *ecmd, t_tools *tool);
 char			*check_cmd_path(char *path, t_execcmd *cmd, t_tools *tools);
 int				running_msh(t_tools *tools);
+int				run_pipeless_builtin_tree(t_cmd *cmd, t_tools *tool);
 /* execredir */
-int			run_redir(t_redircmd *rcmd, t_tools *tool);
-pid_t			pipe_fork(int fd, t_cmd *cmd, int pfd, t_tools *tool);
+int				run_redir(t_redircmd *rcmd, t_tools *tool);
 void			run_pipe(t_pipecmd *pcmd, t_tools *tools);
+// pid_t			pipe_fork(int fd, t_cmd *cmd, int pfd, t_tools *tool);
+// void			run_pipe(t_pipecmd *pcmd, t_tools *tools);
 
 /************************/
 /******* INIT.C ********/
@@ -140,14 +154,20 @@ struct s_cmd	*createpipe(struct s_cmd *left, struct s_cmd *right,
 					t_tools *tools);
 char			*peek(char *line, char *end, int token);
 /*static nullify*/
+/******parse_heredoc.c*****/
+void			here_unlink(t_tools *tools);
+void			here_init(char heredocs[MAXARGS][MAXARGS], t_tools *tools);
+int				createredir_here(char *delim, int mode, int fd,
+					t_tools *tools);
+char			*make_heredoc_file(char *delim, t_tools *tools);
 
-/***** parseredirs.c ****/
+/***** parse_redir_exec.c ****/
 struct s_cmd	*parseexec(char *start, char *end_of_exec, t_tools *tools);
 struct s_cmd	*parse_redirs(char *start, char *end_of_exec, t_tools *tools);
 struct s_cmd	*createredir(char *filestart, int mode, int fd, t_tools *tools);
 struct s_cmd	*parseargv(char *start, char *end, t_tools *tools);
 
-/***** parseutils.c *****/
+/***** parse_utils.c *****/
 
 int				infile_or_outfile(char *start);
 char			*get_redir_path(char *redir, t_tools *tools);
@@ -178,20 +198,6 @@ int				get_matrix_len(char **matrix);
 int				check_quotes(char *line, int i);
 int				skip_quotes(char *line, int i);
 int				skip_token(char *start, int i);
-
-/************************/
-/******* built_ins.c ****/
-/************************/
-int				pwd(t_execcmd *cmd);
-int				ft_exit(void);
-int				env(void);
-int				unset(void);
-int				export(void);
-int				cd(void);
-int				echo(void);
-int				builtin_check_walk(t_cmd *cmd);
-// void	pwd(t_tools *tools, cmd_t *cmd); //TODO
-// void	pwd(t_tools *tools);
 
 // int		check_quotes(char *line, int i);
 // char	*get_redir_error(char *line, int i, int goodtokens);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   structs.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: spitul <spitul@student.42berlin.de >       +#+  +:+       +#+        */
+/*   By: myakoven <myakoven@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/13 20:00:21 by myakoven          #+#    #+#             */
-/*   Updated: 2024/10/19 20:27:22 by spitul           ###   ########.fr       */
+/*   Updated: 2024/10/20 17:41:58 by myakoven         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,6 +84,8 @@ typedef struct s_tools
 	/* Temporary */
 	char					*s;
 	char					*cmd_end;
+	char					heredocs[MAXARGS][MAXARGS];
+	int						hereindex;
 	// char					*p;
 	// char					*p_next;
 	// char					*r;

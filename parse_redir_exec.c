@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parseredirs.c                                      :+:      :+:    :+:   */
+/*   parse_redir_exec.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: myakoven <myakoven@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/06 19:16:34 by myakoven          #+#    #+#             */
-/*   Updated: 2024/10/18 22:26:40 by myakoven         ###   ########.fr       */
+/*   Updated: 2024/10/21 18:36:40 by myakoven         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,21 +33,29 @@ struct s_cmd	*parse_redirs(char *start, char *end_of_exec, t_tools *tools)
 	int				fd_in_or_out;
 	int				mode;
 	struct s_cmd	*ret;
+	int				i;
 
 	ret = NULL;
+	i = 0;
 	while (*start && start < end_of_exec)
 	{
-		mode = 0;
+		mode = -1;
 		fd_in_or_out = -1;
 		if (isquote(*start))
 			start += skip_quotes(start, 0);
 		if (isredir(*start))
 		{
 			fd_in_or_out = infile_or_outfile(start);
-			
-			if (start[1] == start[0])
-				start++;
-			createredir(++start, mode, fd_in_or_out, tools);
+			if (start[0] == start[1] && start[0] == '<')
+			{
+				start += createredir_here(&start[2], mode, 0, tools);
+			}
+			else
+			{
+				if (start[1] == start[0])
+					start++;
+				ret = createredir(++start, mode, fd_in_or_out, tools);
+			}
 			if (!ret)
 				ret = (struct s_cmd *)tools->lastredir;
 		}
@@ -57,6 +65,43 @@ struct s_cmd	*parse_redirs(char *start, char *end_of_exec, t_tools *tools)
 	tools->lastredir = NULL;
 	return ((struct s_cmd *)ret);
 }
+// struct s_cmd	*parse_redirs(char *start, char *end_of_exec, t_tools *tools)
+// {
+// 	int				fd_in_or_out;
+// 	int				mode;
+// 	struct s_cmd	*ret;
+
+// 	ret = NULL;
+// 	while (*start && start < end_of_exec)
+// 	{
+// 		mode = -1;
+// 		fd_in_or_out = -1;
+// 		if (isquote(*start))
+// 			start += skip_quotes(start, 0);
+// 		if (isredir(*start))
+// 		{
+// 			fd_in_or_out = infile_or_outfile(start);
+// 			if (start[0] == start[1] && start[0] == '<')
+// 			{
+// 				createredir_here(&start[2], mode, 0, tools);
+// 				start = start + skip_token(start, 0);
+// 			}
+// 			else
+// 			{
+// 				if (start[1] == start[0])
+// 					start++;
+// 				ret = createredir(++start, mode, fd_in_or_out, tools);
+// 				// (struct t_execcmd *)ret->appe
+// 			}
+// 			if (!ret)
+// 				ret = (struct s_cmd *)tools->lastredir;
+// 		}
+// 		start++;
+// 	}
+// 	parseargv(tools->s, end_of_exec, tools);
+// 	tools->lastredir = NULL;
+// 	return ((struct s_cmd *)ret);
+// }
 
 struct s_cmd	*createredir(char *filestart, int mode, int fd, t_tools *tools)
 {
@@ -73,7 +118,7 @@ struct s_cmd	*createredir(char *filestart, int mode, int fd, t_tools *tools)
 		tools->lastredir = (struct s_redircmd *)makeredir(filestart, end, mode,
 				fd);
 	if (!tools->lastredir)
-		error_exit(tools, 1);
+		error_exit(tools, UNKNOWNERROR);
 	return ((struct s_cmd *)tools->lastredir);
 }
 
@@ -91,6 +136,11 @@ struct s_cmd	*parseargv(char *start, char *end, t_tools *tools)
 		error_exit(tools, 1);
 	while (start[i] && (&start[i] < end))
 	{
+		if (index == MAXARGS)
+		{
+			print_error("argv", "too many arguments", NULL);
+			return (NULL);
+		}
 		while (start[i] && isspace(start[i]))
 			i++;
 		if (start[i] && istoken(start[i]))
