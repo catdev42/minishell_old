@@ -88,7 +88,6 @@ void	run_pipe(t_pipecmd *pcmd, t_tools *tools)
 		close(pipefd[1]);
 		handle_node(pcmd->left, tools); // terminating
 	}
-	close(pipefd[1]);
 	pid2 = fork();
 	if (pid2 == -1)
 		print_errno_exit(NULL, NULL, 0, tools);
@@ -99,9 +98,10 @@ void	run_pipe(t_pipecmd *pcmd, t_tools *tools)
 		close(pipefd[0]);
 		handle_node(pcmd->right, tools); // terminating
 	}
+	close(pipefd[1]);
+	close(pipefd[0]);
 	waitpid(pid1, &status1, 0); // check the sleep situation
 	check_system_fail(status1, tools);
-	close(pipefd[0]);
 	waitpid(pid2, &status2, 0);
 	check_system_fail(status2, tools);
 }
@@ -113,8 +113,8 @@ int	run_redir(t_redircmd *rcmd, t_tools *tool)
 {
 	rcmd->mode = check_file_type(rcmd, rcmd->fd);
 	if (rcmd->mode == -1 && tool->isfork)
-		exit(1); // not sure about this - is a return enough in all cases
-	else
+		exit(1); //exit fail // not sure about this - is a return enough in all cases
+	else if (rcmd->mode == -1)
 		return (0);
 	close(rcmd->fd); // close(0)
 	rcmd->fd = open(rcmd->file, rcmd->mode, 0644);
@@ -124,6 +124,7 @@ int	run_redir(t_redircmd *rcmd, t_tools *tool)
 		print_errno_exit(NULL, strerror(errno), 0, tool);
 	}
 	handle_node(rcmd->cmd, tool);
+	return (1); //(success)
 }
 
 void	run_exec_node(t_tools *tool, t_execcmd *ecmd)
