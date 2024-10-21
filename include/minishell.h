@@ -6,7 +6,7 @@
 /*   By: myakoven <myakoven@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 20:12:04 by myakoven          #+#    #+#             */
-/*   Updated: 2024/10/20 19:25:11 by myakoven         ###   ########.fr       */
+/*   Updated: 2024/10/21 16:22:54 by myakoven         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,8 +143,10 @@ struct s_cmd	*createpipe(struct s_cmd *left, struct s_cmd *right,
 char			*peek(char *line, char *end, int token);
 /*static nullify*/
 /******parse_heredoc.c*****/
+void			here_unlink(t_tools *tools);
 void			here_init(char heredocs[MAXARGS][MAXARGS], t_tools *tools);
-struct s_cmd	*createredir_here(char *delim, int mode, int fd, t_tools *tools);
+struct s_cmd	*createredir_here(char *delim, int mode, int fd,
+					t_tools *tools);
 char			*make_heredoc_file(char *delim, t_tools *tools);
 
 /***** parse_redir_exec.c ****/

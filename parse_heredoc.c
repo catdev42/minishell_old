@@ -6,7 +6,7 @@
 /*   By: myakoven <myakoven@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/06 19:16:34 by myakoven          #+#    #+#             */
-/*   Updated: 2024/10/20 19:26:50 by myakoven         ###   ########.fr       */
+/*   Updated: 2024/10/21 16:38:26 by myakoven         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,30 @@ void	here_init(char heredocs[MAXARGS][MAXARGS], t_tools *tools)
 	}
 	return ;
 }
+
+void	here_unlink(t_tools *tools)
+{
+	int	i;
+
+	char(*heredocs)[20];
+	heredocs = tools->heredocs;
+	i = 0;
+	while (i < MAXARGS)
+	{
+		if (access(heredocs[i], F_OK) == -1)
+		{
+			if (errno == ENOENT)
+				errno = 0;
+			else
+				print_error(heredocs[i], "permission", NULL);
+		}
+		else
+			unlink(heredocs[i]);
+		i++;
+	}
+	return ;
+}
+
 // tools->lastredir;
 // launchreadlineloop
 // write what it sees into a file and turn it into a regular infile
@@ -80,7 +104,7 @@ char	*make_heredoc_file(char *delim, t_tools *tools)
 		line = readline("heredoc: ");
 		if (!line)
 			error_exit(tools, errno);
-		if (ft_strncmp(line, delim, ft_strlen(delim) + 1) == 0)
+		if (ft_strncmp(line, tempalloc_delim, end - delim + 1) == 0)
 			break ;
 		templine = safe_calloc(ft_strlen(line) + 3, 1, tools);
 		ft_strlcpy(templine, line, ft_strlen(line) + 3);
