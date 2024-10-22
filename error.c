@@ -107,7 +107,7 @@ int	print_errno_exit(const char *arg, const char *errline, int custom_fail,
 	ft_putstr_fd("\n", 2);
 	if (tools)
 		clean_tools(tools);
-	if (custom_fail == 141 || custom_fail == 142)
+	if (custom_fail > 0)
 		exit(custom_fail);
 	else
 		exit(errno);
@@ -147,7 +147,8 @@ void	clean_tools(t_tools *tools)
 	reset_tools(tools);
 	if (tools->env)
 		ft_freetab(tools->env);
-	// ft_memset(tools->heredocs, 0, sizeof(tools->heredocs)); //its not allocated... 
+	// ft_memset(tools->heredocs, 0, sizeof(tools->heredocs));
+		//its not allocated...
 }
 
 struct s_cmd	*clean_execs(struct s_cmd *first, struct s_cmd *second)
