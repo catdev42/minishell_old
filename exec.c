@@ -75,7 +75,7 @@ void	handle_node(t_cmd *cmd, t_tools *tool)
 		run_pipe(pcmd, tool);
 	}
 	else
-		exit(1);
+		exit(0); 
 	/*if we dont terminate all the stuff in exec node we exit error?*/
 }
 

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   exec_cmd.c                                         :+:      :+:    :+:   */
+/*   exec_node_handling.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: spitul <spitul@student.42berlin.de >       +#+  +:+       +#+        */
+/*   By: spitul <spitul@student.42berlin.de>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/18 23:23:17 by myakoven          #+#    #+#             */
-/*   Updated: 2024/10/20 15:47:32 by spitul           ###   ########.fr       */
+/*   Updated: 2024/10/22 08:05:08 by spitul           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ void	run_exec_node(t_tools *tool, t_execcmd *ecmd)
 		i++;
 	}
 	free(cmdpath);
-	print_errno_exit(ecmd->argv[0], "command not found", FORKFAIL, tool); //$?
+	print_errno_exit(ecmd->argv[0], "command not found", FORKFAIL, tool); //$? bash uses 127 as exit code in this case
 }
 
 char	*check_cmd_path(char *path, t_execcmd *cmd, t_tools *tools)
@@ -74,12 +74,13 @@ char	*check_cmd_path(char *path, t_execcmd *cmd, t_tools *tools)
 	free(temp);
 	if (!cmdpath)
 		return (NULL); // not failure, just path is not found yet
+		//spitul yes, this is a malloc failure 
 	if (access(cmdpath, F_OK) == 0)
 	{
 		if (access(cmdpath, X_OK) != 0) // cannot execute cannot access
 		{
 			free(cmdpath);
-			print_errno_exit(NULL, NULL, 0, tools); // myakoven
+			print_errno_exit(NULL, NULL, 0, tools); 
 		}
 		return (cmdpath);
 	}
