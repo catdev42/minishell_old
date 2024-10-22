@@ -19,10 +19,10 @@ int	running_msh(t_tools *tools)
 {
 	pid_t	pid;
 	int		status;
-	status = 0;
 	pid_t	pid;
 	int		status;
 
+	status = 0;
 	status = 0;
 	if (!tools->tree)
 		return (0);
@@ -75,8 +75,11 @@ void	handle_node(t_cmd *cmd, t_tools *tool)
 		run_pipe(pcmd, tool);
 	}
 	else
-		exit(0); 
-	/*if we dont terminate all the stuff in exec node we exit error?*/
+		print_errno_exit(NULL, "unknown error", 141, tool);
+	/*
+	This is an error exit, because there is no else,
+		this just catches any unknown errors... if we dont terminate all the stuff in exec node we exit error
+	*/
 }
 
 /* function forks and sets up and manages pipes*/
@@ -102,8 +105,8 @@ void	run_pipe(t_pipecmd *pcmd, t_tools *tools)
 		handle_node(pcmd->left, tools); // terminating
 	}
 	close(pipefd[1]);
-		// if parent keeps the writing end open the pipe 
-		// will not be considered closed by the reading process
+	// if parent keeps the writing end open the pipe
+	// will not be considered closed by the reading process
 	pid2 = fork();
 	if (pid2 == -1)
 		print_errno_exit(NULL, NULL, 0, tools);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: spitul <spitul@student.42berlin.de>        +#+  +:+       +#+        */
+/*   By: myakoven <myakoven@student.42berlin.de>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/07 20:12:04 by myakoven          #+#    #+#             */
-/*   Updated: 2024/10/22 08:15:31 by spitul           ###   ########.fr       */
+/*   Updated: 2024/10/22 14:51:51 by myakoven         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,10 +56,10 @@ void			walking(struct s_cmd *cmd);
 /************************/
 int				pwd(t_execcmd *cmd);
 int				ft_exit(t_execcmd *cmd, t_tools *tool);
-int				env(void);
+// int				env(t_execcmd *cmd, t_tools *tool);
 int				unset(t_execcmd *cmd, t_tools *tool);
-int				export(void);
-int				cd(void);
+// int				export(t_execcmd *cmd, t_tools *tool);
+// int				cd(t_execcmd *cmd, t_tools *tool);
 int				echo(t_execcmd *cmd);
 int				builtin_check_walk(t_cmd *cmd);
 
